@@ -7,3 +7,5 @@ This repo contains notes and code fragments for my lectures of *Computational In
 Students are also encouraged to join the Telegram groups:  
 * [01urrov](https://t.me/polito_01urrov)
 * [03qtiiu](https://t.me/polito_03qtiiu)
+
+> Unless expressly noted in the individual files, the material is licensed under the [EUPL-1.2](https://eupl.eu/).
