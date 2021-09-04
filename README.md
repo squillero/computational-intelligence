@@ -1,10 +1,7 @@
 Computational Intelligence
 ==========================
 
-This repo contains notes and code fragments for my lectures of *Computational Intelligence* ([01URROV](https://didattica.polito.it/pls/portal30/gap.pkg_guide.viewGap?p_cod_ins=01URROV)) at [Politecnico di Torino](https://www.polito.it/). All the material is free for personal or classroom use, see [the license file](./LICENSE.md) for details.
+This repo contains notes and code fragments for my lectures of *Computational Intelligence* ([01URROV](https://didattica.polito.it/pls/portal30/gap.pkg_guide.viewGap?p_cod_ins=01URROV)) at [Politecnico di Torino](https://www.polito.it/). Unless expressly noted in the individual files, all the material is licensed under the [EUPL-1.2](https://eupl.eu/).
 
-
-Students are also encouraged to join the Telegram groups:  
+Students are also encouraged to join the Telegram group:  
 * [01urrov](https://t.me/polito_01urrov)
-
-> Unless expressly noted in the individual files, the material is licensed under the [EUPL-1.2](https://eupl.eu/).
