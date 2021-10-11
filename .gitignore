@@ -140,3 +140,4 @@ cython_debug/
 # GX Files
 .DS_Store
 .idea
+.vscode
