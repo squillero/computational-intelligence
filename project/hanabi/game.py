@@ -148,7 +148,7 @@ class Game(object):
         self.__score = 0
         # add actions for each class of data
         self.__dataActions[GameData.ClientPlayerDiscardCardRequest] = self.__satisfyDiscardRequest
-        self.__dataActions[GameData.ClientPlayerShowCardsRequest] = self.__satisfyShowCardRequest
+        self.__dataActions[GameData.ClientGetGameStateRequest] = self.__satisfyShowCardRequest
         self.__dataActions[GameData.ClientPlayerPlayCardRequest] = self.__satisfyPlayCardRequest
         self.__dataActions[GameData.ClientHintData] = self.__satisfyHintRequest
 
@@ -180,10 +180,10 @@ class Game(object):
             return (GameData.ServerActionInvalid("It is not your turn yet"), None)
 
     # Show request
-    def __satisfyShowCardRequest(self, data: GameData.ClientPlayerShowCardsRequest):
+    def __satisfyShowCardRequest(self, data: GameData.ClientGetGameStateRequest):
         logging.info("Showing hand to: " + data.sender)
         currentPlayer, playerList = self.__getPlayersStatus(data.sender)
-        return (GameData.ServerPlayerHandsData(currentPlayer, playerList, self.__noteTokens, self.__stormTokens, self.__tableCards, self.__discardPile), None)
+        return (GameData.ServerGameStateData(currentPlayer, playerList, self.__noteTokens, self.__stormTokens, self.__tableCards, self.__discardPile), None)
 
     # Play card request
     def __satisfyPlayCardRequest(self, data: GameData.ClientPlayerPlayCardRequest):

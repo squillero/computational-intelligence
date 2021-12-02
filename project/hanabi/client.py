@@ -39,7 +39,7 @@ def manageInput():
         elif command == "ready" and status == statuses[0]:
             s.send(GameData.ClientPlayerStartRequest(playerName).serialize())
         elif command == "show" and status == statuses[1]:
-            s.send(GameData.ClientPlayerShowCardsRequest(playerName).serialize())
+            s.send(GameData.ClientGetGameStateRequest(playerName).serialize())
         elif command.split(" ")[0] == "discard" and status == statuses[1]:
             try:
                 cardStr = command.split(" ")
@@ -113,7 +113,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print("Game start!")
             s.send(GameData.ClientPlayerReadyData(playerName).serialize())
             status = statuses[1]
-        if type(data) is GameData.ServerPlayerHandsData:
+        if type(data) is GameData.ServerGameStateData:
             dataOk = True
             print("Current player: " + data.currentPlayer)
             print("Player hands: ")

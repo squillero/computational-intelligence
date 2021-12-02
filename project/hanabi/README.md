@@ -20,7 +20,8 @@ Commands for client:
 + exit: exit from the game
 + ready: set your status to ready (lobby only)
 + show: show cards
-+ hint \<type> \<destinatary>:
++ hint \<type> \<destinatary> \<cards>:
   + type: 'color' or 'value'
   + destinatary: name of the person you want to ask the hint to
+  + cards: the cards you are addressing to. They start from 0 and are shown in the hand order. (this will probably be removed in a later version)
 + discard \<num>: discard the card *num* (\[0-4]) from your hand
