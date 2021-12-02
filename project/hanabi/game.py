@@ -70,6 +70,7 @@ class Game(object):
         self.__completedFireworks = 0
         # Init cards
         numCards = 0
+        self.__colorList = []
         if not self.__cardsInitialized:
             self.__cardsInitialized = True
             self.__gameOver = False
@@ -315,12 +316,13 @@ class Game(object):
         p.hand.pop(cardPosition)
     
     def __checkTableCards(self) -> bool:
-        colorList = []
         numberList = []
         for card in self.__tableCards:
-            if card.color not in colorList:
-                colorList.append(card.color)
+            if len(self.__tableCards > 0):
+                canPlay = self.__tableCards[0].color == card.color and card.color not in self.__colorList
             else:
+                canPlay = card.color not in self.__colorList
+            if not canPlay:
                 return False
             numberList.append(card.value)
         for i in range(len(numberList)):
