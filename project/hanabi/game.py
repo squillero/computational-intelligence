@@ -70,7 +70,6 @@ class Game(object):
         self.__completedFireworks = 0
         # Init cards
         numCards = 0
-        self.__colorList = []
         if not self.__cardsInitialized:
             self.__cardsInitialized = True
             self.__gameOver = False
@@ -131,6 +130,8 @@ class Game(object):
                 numCards += 1
         self.__cardsToDraw = deepcopy(self.__cards)
         self.__tableCards = []
+        for i in range(5):
+            self.__tableCards.append([])
         
         ###
         # Init tokens
@@ -310,18 +311,19 @@ class Game(object):
             if p.name == playerName:
                 p.hand.append(card)
 
-    def __playCard(self, playerName: str, cardPosition: int):
+    def __playCard(self, playerName: str, cardPosition: int, cardPoolIndex: int):
         p = self.__getPlayer(playerName)
-        self.__tableCards.append(p.hand[cardPosition])
+        self.__tableCards[cardPoolIndex].append(p.hand[cardPosition])
         p.hand.pop(cardPosition)
+        p.hand.append(self.__cardsToDraw.pop())
     
     def __checkTableCards(self) -> bool:
         numberList = []
         for card in self.__tableCards:
             if len(self.__tableCards > 0):
-                canPlay = self.__tableCards[0].color == card.color and card.color not in self.__colorList
+                canPlay = self.__tableCards[0].color == card.color
             else:
-                canPlay = card.color not in self.__colorList
+                canPlay = True
             if not canPlay:
                 return False
             numberList.append(card.value)
@@ -331,8 +333,8 @@ class Game(object):
         return True
 
     # assumes cards checked
-    def __checkFinishedFirework(self) -> bool:
-        return len(self.__tableCards) == 5
+    def __checkFinishedFirework(self, pile) -> bool:
+        return len(pile) == 5
 
     def __manageFinishedFirework(self):
         self.__completedFireworks += 1
@@ -348,15 +350,20 @@ class Game(object):
         self.__drawCard(self.__players[self.__currentPlayer].name)
 
     def __checkGameEnded(self):
+        ended = True
+        for pile in self.__tableCards:
+            ended = ended and self.__checkFinishedFirework(pile)
+        if ended:
+            score = 25
+            return True, score
         if self.__stormTokens == self.__MAX_STORM_TOKENS:
             return True, 0
-        if self.__completedFireworks == self.__MAX_FIREWORKS:
-            return True, 25
         for player in self.__players:
             if len(player.hand) > 0:
                 return False, 0
-        score = 5 * self.__completedFireworks
-        score += len(self.__tableCards)
+        score = 0
+        for pile in self.__tableCards:
+            score += len(pile)
         return True, score
     
     def getPlayers(self):
