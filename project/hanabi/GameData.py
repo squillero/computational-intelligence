@@ -93,7 +93,7 @@ class ClientPlayerPlayCardRequest(ClientToServerData):
     def __init__(self, sender, handCardOrdered: int, cardPoolIndex: int) -> None:
         action = "Play card request"
         self.handCardOrdered = handCardOrdered
-        self.cardPoolIndex: cardPoolIndex
+        self.cardPoolIndex = cardPoolIndex
         super().__init__(sender, action)
 
 # Server to client

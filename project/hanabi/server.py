@@ -67,7 +67,6 @@ def manageConnection(conn: socket, addr):
                     if multipleData is not None:
                         for id in playerConnections:
                             playerConnections[id][0].send(multipleData.serialize())
-                    # Hint part MISSING
 
 
 def manageInput():
