@@ -74,12 +74,9 @@ def manageInput():
                     if value not in ["green", "red", "blue", "yellow", "white"]:
                         print("Error: card color can only be green, red, blue, yellow or white")
                         continue
-                positions = []
-                for pos in command.split(" ")[4:]:
-                    positions.append(int(pos))
-                s.send(GameData.ClientHintData(playerName, destination, t, value, positions).serialize())
+                s.send(GameData.ClientHintData(playerName, destination, t, value).serialize())
             except:
-                print("Maybe you wanted to type 'hint <type> <destinatary> <value> <positions>'?")
+                print("Maybe you wanted to type 'hint <type> <destinatary> <value>'?")
                 continue
         elif command == "":
             print("[" + playerName + " - " + status + "]: ", end="")

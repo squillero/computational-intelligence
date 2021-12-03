@@ -29,12 +29,11 @@ class ClientHintData(ClientToServerData):
     value: can be the color or the value of the card
     positions: a list of cards that satisfy the value of the hint (notice, this will probably not be needed anymore)
     '''
-    def __init__(self, sender: str, destination: str, type: str, value, positions: list) -> None:
+    def __init__(self, sender: str, destination: str, type: str, value) -> None:
         action = "Hint data from client to server"
         self.destination = destination
         self.type = type
         self.value = value
-        self.positions = positions
         super().__init__(sender, action)
 
 class ClientPlayerAddData(ClientToServerData):

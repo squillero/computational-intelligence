@@ -216,9 +216,26 @@ class Game(object):
             logging.warning("All the note tokens have been used. Impossible getting hints")
             return GameData.ServerActionInvalid("All the note tokens have been used"), None
         self.__noteTokens += 1
+        positions = []
+        destPlayer: Player = None
+        for p in self.__players:
+            if p.name == data.destination:
+                destPlayer = p
+                break
+        for i in range(len(destPlayer.hand)):
+            if data.type == "color" or data.type == "colour":
+                if data.value == destPlayer.hand[i].color:
+                    positions.append(i)
+            elif data.type == "value":
+                if data.value == destPlayer.hand[i].value:
+                    positions.append(i)
+            else:
+                # Backtrack on note token
+                self.__noteTokens -= 1
+                return GameData.ServerInvalidDataReceived(data=data.type), None
         self.__nextTurn()
-        logging.info("Player " + data.sender + " providing hint to " + data.destination + ": cards with " + data.type + " " + str(data.value) + " are in positions: " + str(data.positions))
-        return None, GameData.ServerHintData(data.sender, data.destination, data.type, data.value, data.positions)
+        logging.info("Player " + data.sender + " providing hint to " + data.destination + ": cards with " + data.type + " " + str(data.value) + " are in positions: " + str(positions))
+        return None, GameData.ServerHintData(data.sender, data.destination, data.type, data.value, positions)
 
     # Player functions
     # players list. Not the best, but there are literally max 5 players and the list should give us the order of connection = the order of the rounds
