@@ -7,7 +7,7 @@ Exam of computational intelligence 2021 - 2022. It requires teaching the client 
 The server accepts passing objects provided in GameData.py back and forth to the clients.
 Each object has a ```serialize()``` and a ```deserialize(data: str)``` method that must be used to pass the data between server and client.
 
-TODO: define more specifications on how to use each object.
+Watch out! I'd suggest to keep everything in the same folder, since serialization looks dependent on the import path (thanks Paolo Rabino for letting me know).
 
 Commands for server:
 
