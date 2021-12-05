@@ -149,6 +149,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 print("Your cards with value " + str(data.value) + " are:")
                 for i in data.positions:
                     print("\t" + str(i))
+        if type(data) is GameData.ServerInvalidDataReceived:
+            dataOk = True
+            print(data.data)
         if type(data) is GameData.ServerGameOver:
             dataOk = True
             print(data.message)
