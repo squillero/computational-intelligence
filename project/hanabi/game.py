@@ -129,9 +129,13 @@ class Game(object):
                 self.__cards.append(Card(numCards, 5, "white"))
                 numCards += 1
         self.__cardsToDraw = deepcopy(self.__cards)
-        self.__tableCards = []
-        for i in range(5):
-            self.__tableCards.append([])
+        self.__tableCards = {
+            "red": [],
+            "yellow": [],
+            "green": [],
+            "blue": [],
+            "white": []
+        }
         
         ###
         # Init tokens
@@ -192,7 +196,7 @@ class Game(object):
         p = self.__getCurrentPlayer()
         # it's the right turn to perform an action
         if p.name == data.sender:
-            self.__playCard(p.name, data.handCardOrdered, data.cardPoolIndex)
+            self.__playCard(p.name, data.handCardOrdered)
             ok = self.__checkTableCards()
             self.__gameOver, self.__score = self.__checkGameEnded()
             if self.__gameOver:
@@ -323,21 +327,20 @@ class Game(object):
             if p.name == playerName:
                 p.hand.append(card)
 
-    def __playCard(self, playerName: str, cardPosition: int, cardPoolIndex: int):
+    def __playCard(self, playerName: str, cardPosition: int):
         p = self.__getPlayer(playerName)
-        self.__tableCards[cardPoolIndex].append(p.hand[cardPosition])
+        self.__tableCards[p.hand[cardPosition].color].append(p.hand[cardPosition])
         p.hand.pop(cardPosition)
         p.hand.append(self.__cardsToDraw.pop())
     
     def __checkTableCards(self) -> bool:
         for cardPool in self.__tableCards:
-            for card in cardPool:
-                canPlay = cardPool[0].color == card.color and cardPool[len(cardPool) - 1].value == len(cardPool)
-            if not canPlay:
-                cardPool.pop()
-                self.__discardPile.append(card)
-                self.__strikeThunder()
-                return False
+            for card in self.__tableCards[cardPool]:
+                if len(self.__tableCards[cardPool]) > 0 and self.__tableCards[cardPool][len(self.__tableCards[cardPool]) - 1].value != len(self.__tableCards[cardPool]):
+                    cardPool.pop()
+                    self.__discardPile.append(card)
+                    self.__strikeThunder()
+                    return False
         return True
 
     # assumes cards checked

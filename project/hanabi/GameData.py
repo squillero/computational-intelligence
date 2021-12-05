@@ -87,12 +87,10 @@ class ClientPlayerPlayCardRequest(ClientToServerData):
     Used to play a card.
     handCardOrdered: the card in hand you want to play 
         (card 0 is the leftmost, card N is the rightmost).
-    cardPoolIndex: the card pool you want to play the card to
     '''
-    def __init__(self, sender, handCardOrdered: int, cardPoolIndex: int) -> None:
+    def __init__(self, sender, handCardOrdered: int) -> None:
         action = "Play card request"
         self.handCardOrdered = handCardOrdered
-        self.cardPoolIndex = cardPoolIndex
         super().__init__(sender, action)
 
 # Server to client
