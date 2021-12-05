@@ -162,8 +162,10 @@ class Game(object):
     # Each method produces a tuple of ServerToClientData derivates
     # where the first element is the one to send to a single player, while the second one has to be sent to all players
 
-    def satisfyRequest(self, data: GameData.ClientToServerData):
+    def satisfyRequest(self, data: GameData.ClientToServerData, playerName: str):
         if type(data) in self.__dataActions:
+            if type(data) == GameData.ClientGetGameStateRequest:
+                data.sender = playerName
             return self.__dataActions[type(data)](data)
         else:
             return GameData.ServerInvalidDataReceived(data), None

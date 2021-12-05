@@ -64,7 +64,7 @@ def manageConnection(conn: socket, addr):
                         status = "Game"
                 # In game
                 elif status == "Game":
-                    singleData, multipleData = game.satisfyRequest(data)
+                    singleData, multipleData = game.satisfyRequest(data, playerName)
                     if singleData is not None:
                         conn.send(singleData.serialize())
                     if multipleData is not None:
