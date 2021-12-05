@@ -42,9 +42,12 @@ def manageConnection(conn: socket, addr):
                         game.addPlayer(playerName)
                         conn.send(GameData.ServerPlayerConnectionOk(playerName).serialize())
                     elif type(data) is GameData.ClientPlayerStartRequest:
-                        game.setPlayerReady(playerName)
-                        logging.info("Player ready: " + playerName)
-                        conn.send(GameData.ServerPlayerStartRequestAccepted(len(game.getPlayers()), game.getNumReadyPlayers()).serialize())
+                        if playerName not in game.getPlayers() and playerName != "" and playerName is not None:
+                            game.setPlayerReady(playerName)
+                            logging.info("Player ready: " + playerName)
+                            conn.send(GameData.ServerPlayerStartRequestAccepted(len(game.getPlayers()), game.getNumReadyPlayers()).serialize())
+                        else:
+                            return
                         if len(game.getPlayers()) == game.getNumReadyPlayers() and len(game.getPlayers()) > 1:
                             listNames = []
                             for player in game.getPlayers():
