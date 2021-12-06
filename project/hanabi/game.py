@@ -208,6 +208,7 @@ class Game(object):
                 logging.info("Score: " + str(self.__score) + "; message: " + self.__scoreMessages[self.__score])
                 return (None, GameData.ServerGameOver(self.__score, self.__scoreMessages[self.__score]))
             if not ok:
+                self.__nextTurn()
                 return (None, GameData.ServerPlayerThunderStrike())
             else:
                 logging.info(self.__getCurrentPlayer().name + ": card played and correctly put on the table")
