@@ -347,7 +347,7 @@ class Game(object):
         for cardPool in self.__tableCards:
             for card in self.__tableCards[cardPool]:
                 if len(self.__tableCards[cardPool]) > 0 and self.__tableCards[cardPool][len(self.__tableCards[cardPool]) - 1].value != len(self.__tableCards[cardPool]):
-                    cardPool.pop()
+                    self.__tableCards[cardPool].pop()
                     self.__discardPile.append(card)
                     self.__strikeThunder()
                     return False
