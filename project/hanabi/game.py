@@ -327,7 +327,7 @@ class Game(object):
                         break
                     if card.id == cardID:
                         self.__discardPile.append(card) # discard
-                        p.hand.remove(card) # remove from hand
+                        p.hand.pop(card) # remove from hand
                         endLoop = True
         return True
     
