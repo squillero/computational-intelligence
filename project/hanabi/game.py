@@ -44,7 +44,7 @@ class Player(object):
         for card in self.hand:
             if card.id == cardID:
                 pile.append(card)
-                self.hand.pop(card)
+                self.hand.remove(card)
                 break
 
 class Game(object):
@@ -173,15 +173,15 @@ class Game(object):
     # Draw request    
     def __satisfyDiscardRequest(self, data: GameData.ClientPlayerDiscardCardRequest):
         player = self.__getCurrentPlayer()
-        cardID = player.hand[data.handCardOrdered]
+        card: Card = player.hand[data.handCardOrdered]
         # It's the right turn to perform an action
         if player.name == data.sender:
-            if not self.__discardCard(cardID, player.name):
+            if not self.__discardCard(card.id, player.name):
                 logging.warning("Impossible discarding a card: there is no used token available")
                 return (GameData.ServerActionInvalid("You have no used tokens"), None)
             else:
                 self.__drawCard(player.name)
-                logging.info("Player: " + self.__getCurrentPlayer().name + ": card " + str(cardID.id) + " discarded successfully")
+                logging.info("Player: " + self.__getCurrentPlayer().name + ": card " + str(card.id) + " discarded successfully")
                 self.__nextTurn()
                 return (None, GameData.ServerActionValid(self.__getCurrentPlayer().name))
         else:
@@ -327,7 +327,7 @@ class Game(object):
                         break
                     if card.id == cardID:
                         self.__discardPile.append(card) # discard
-                        p.hand.pop(card) # remove from hand
+                        p.hand.remove(card) # remove from hand
                         endLoop = True
         return True
     
