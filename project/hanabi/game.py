@@ -329,7 +329,6 @@ class Game(object):
                         self.__discardPile.append(card) # discard
                         p.hand.remove(card) # remove from hand
                         endLoop = True
-        self.__nextTurn()
         return True
     
     def __drawCard(self, playerName: str):
