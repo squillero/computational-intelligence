@@ -44,7 +44,7 @@ class Player(object):
         for card in self.hand:
             if card.id == cardID:
                 pile.append(card)
-                self.hand.remove(card)
+                self.hand.pop(card)
                 break
 
 class Game(object):
