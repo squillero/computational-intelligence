@@ -30,6 +30,9 @@ class Player(object):
         self.hand = []
         self.score = 0
 
+    def takeCard(self, cards):
+        self.hand.append(cards.pop())
+    
     def toString(self):
         c = "[ \n\t"
         for card in self.hand:
