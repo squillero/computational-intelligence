@@ -174,19 +174,26 @@ class ServerGameStateData(ServerToClientData):
 class ServerActionValid(ServerToClientData):
     '''
     Action well performed
+    player: the current player.
+    action: the actino occurred. Now it is only "discard"
+    move: the last move that occurred.
     '''
-    def __init__(self, player: str) -> None:
+    def __init__(self, player: str, action: str, card) -> None:
         action = "Valid action performed"
+        self.action = action
+        self.card = card
         self.player = player
         super().__init__(action)
 
 class ServerPlayerMoveOk(ServerToClientData):
     '''
-    Play move well performed and successful in game terms.
+    Play move well performed and successful in game terms. It means a card has been placed successfully.
     player: the current player.
+    card: the last card played.
     '''
-    def __init__(self, player: str) -> None:
+    def __init__(self, player: str, card) -> None:
         action = "Correct move! Well done!"
+        self.card = card
         self.player = player
         super().__init__(action)
 
@@ -194,9 +201,13 @@ class ServerPlayerThunderStrike(ServerToClientData):
     '''
     Play move well performed, unsuccessful in game terms.
     Adds a red note on the server.
+    player: the current player
+    card: the card that was just discarded
     '''
-    def __init__(self) -> None:
+    def __init__(self, player: str, card) -> None:
         action = "The Gods are angry at you!"
+        self.player = player
+        self.card = card
         super().__init__(action)
 
 class ServerActionInvalid(ServerToClientData):
