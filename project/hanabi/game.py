@@ -37,16 +37,6 @@ class Player(object):
         c += " ]"
         return ("Player " + self.name + " { \n\tcards: " + c + "; \n\tscore: " + str(self.score) + "\n}")
 
-    def takeCard(self, cards):
-        self.hand.append(cards.pop())
-
-    def discardCard(self, pile, cardID):
-        for card in self.hand:
-            if card.id == cardID:
-                pile.append(card)
-                self.hand.remove(card)
-                break
-
 class Game(object):
 
     __dataActions = {}
@@ -173,9 +163,11 @@ class Game(object):
     # Draw request    
     def __satisfyDiscardRequest(self, data: GameData.ClientPlayerDiscardCardRequest):
         player = self.__getCurrentPlayer()
-        card: Card = player.hand[data.handCardOrdered]
         # It's the right turn to perform an action
         if player.name == data.sender:
+            if data.handCardOrdered > len(player.hand) or data.handCardOrdered < 0:
+                return (GameData.ServerActionInvalid("You don't have that many cards!"), None)
+            card: Card = player.hand[data.handCardOrdered]
             if not self.__discardCard(card.id, player.name):
                 logging.warning("Impossible discarding a card: there is no used token available")
                 return (GameData.ServerActionInvalid("You have no used tokens"), None)
@@ -198,6 +190,8 @@ class Game(object):
         p = self.__getCurrentPlayer()
         # it's the right turn to perform an action
         if p.name == data.sender:
+            if data.handCardOrdered > len(p.hand) or data.handCardOrdered < 0:
+                return (GameData.ServerActionInvalid("You don't have that many cards!"), None)
             card: Card = p.hand[data.handCardOrdered]
             self.__playCard(p.name, data.handCardOrdered)
             ok = self.__checkTableCards()
