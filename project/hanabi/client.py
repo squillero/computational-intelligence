@@ -54,7 +54,7 @@ def manageInput():
                 cardOrder = int(cardStr[1])
                 s.send(GameData.ClientPlayerPlayCardRequest(playerName, cardOrder).serialize())
             except:
-                print("Maybe you wanted to type 'play <num> <pile position>'?")
+                print("Maybe you wanted to type 'play <num>'?")
                 continue
         elif command.split(" ")[0] == "hint" and status == statuses[1]:
             try:
