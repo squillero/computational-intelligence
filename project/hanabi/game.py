@@ -193,7 +193,7 @@ class Game(object):
         p = self.__getCurrentPlayer()
         # it's the right turn to perform an action
         if p.name == data.sender:
-            if data.handCardOrdered > len(p.hand) or data.handCardOrdered < 0:
+            if data.handCardOrdered >= len(p.hand) or data.handCardOrdered < 0:
                 return (GameData.ServerActionInvalid("You don't have that many cards!"), None)
             card: Card = p.hand[data.handCardOrdered]
             self.__playCard(p.name, data.handCardOrdered)
@@ -362,7 +362,6 @@ class Game(object):
 
     def __strikeThunder(self):
         self.__stormTokens += 1
-        self.__drawCard(self.__players[self.__currentPlayer].name)
 
     def __checkGameEnded(self):
         ended = True
