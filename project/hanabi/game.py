@@ -245,7 +245,6 @@ class Game(object):
         if self.__noteTokens == self.__MAX_NOTE_TOKENS:
             logging.warning("All the note tokens have been used. Impossible getting hints")
             return GameData.ServerActionInvalid("All the note tokens have been used"), None
-        self.__noteTokens += 1
         positions = []
         destPlayer: Player = None
         for p in self.__players:
@@ -269,9 +268,11 @@ class Game(object):
             if data.sender == data.destination:
                 self.__noteTokens -= 1
                 return GameData.ServerInvalidDataReceived(data="Sender cannot be destination!"), None
-        self.__nextTurn()
+
         if len(positions) == 0:
             return GameData.ServerInvalidDataReceived(data="You cannot give hints about cards that the other person does not have"), None
+        self.__nextTurn()
+        self.__noteTokens += 1
         logging.info("Player " + data.sender + " providing hint to " + data.destination + ": cards with " + data.type + " " + str(data.value) + " are in positions: " + str(positions))
         return None, GameData.ServerHintData(data.sender, data.destination, data.type, data.value, positions)
 
