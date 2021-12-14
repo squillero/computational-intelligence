@@ -40,7 +40,6 @@ class Player(object):
         self.name = name
         self.ready = False
         self.hand = []
-        self.score = 0
 
     def takeCard(self, cards):
         self.hand.append(cards.pop())
@@ -50,7 +49,7 @@ class Player(object):
         for card in self.hand:
             c += "\t" + card.toString() + " \n\t"
         c += " ]"
-        return ("Player " + self.name + " { \n\tcards: " + c + "; \n\tscore: " + str(self.score) + "\n}")
+        return ("Player " + self.name + " { \n\tcards: " + c + "\n}")
 
     def toClientString(self):
         c = "[ \n\t"
