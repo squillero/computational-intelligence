@@ -243,6 +243,9 @@ class Game(object):
             if p.name == data.destination:
                 destPlayer = p
                 break
+        if destPlayer is None:
+            return GameData.ServerInvalidDataReceived(data="The selected player does not exist"), None
+
         for i in range(len(destPlayer.hand)):
             if data.type == "color" or data.type == "colour":
                 if data.value == destPlayer.hand[i].color:
