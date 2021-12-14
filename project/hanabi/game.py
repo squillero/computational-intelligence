@@ -12,6 +12,9 @@ class Card(object):
 
     def toString(self):
         return ("Card " + str(self.id) + "; value: " + str(self.value) + "; color: " + str(self.color))
+
+    def toClientString(self):
+        return ("Card " + str(self.value) + " - " + str(self.color))
     
     def __hash__(self):
         return self.id
@@ -46,6 +49,13 @@ class Player(object):
         c = "[ \n\t"
         for card in self.hand:
             c += "\t" + card.toString() + " \n\t"
+        c += " ]"
+        return ("Player " + self.name + " { \n\tcards: " + c + "; \n\tscore: " + str(self.score) + "\n}")
+
+    def toClientString(self):
+        c = "[ \n\t"
+        for card in self.hand:
+            c += "\t" + card.toClientString() + " \n\t"
         c += " ]"
         return ("Player " + self.name + " { \n\tcards: " + c + "; \n\tscore: " + str(self.score) + "\n}")
 
