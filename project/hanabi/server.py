@@ -70,6 +70,8 @@ def manageConnection(conn: socket, addr):
                     if multipleData is not None:
                         for id in playerConnections:
                             playerConnections[id][0].send(multipleData.serialize())
+                            if game.isGameOver():
+                                os._exit(0)
 
 
 def manageInput():
