@@ -186,7 +186,7 @@ class Game(object):
         player = self.__getCurrentPlayer()
         # It's the right turn to perform an action
         if player.name == data.sender:
-            if data.handCardOrdered > len(player.hand) or data.handCardOrdered < 0:
+            if data.handCardOrdered >= len(player.hand) or data.handCardOrdered < 0:
                 return (GameData.ServerActionInvalid("You don't have that many cards!"), None)
             card: Card = player.hand[data.handCardOrdered]
             if not self.__discardCard(card.id, player.name):
