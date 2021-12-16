@@ -119,7 +119,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print("Table cards: ")
             for pos in data.tableCards:
                 print(pos + ": [ ")
-
                 for c in data.tableCards[pos]:
                     print(c.toClientString() + " ")
                 print("]")
