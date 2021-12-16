@@ -56,7 +56,7 @@ class Player(object):
         for card in self.hand:
             c += "\t" + card.toClientString() + " \n\t"
         c += " ]"
-        return ("Player " + self.name + " { \n\tcards: " + c + "; \n\tscore: " + str(self.score) + "\n}")
+        return ("Player " + self.name + " { \n\tcards: " + c + "\n}")
 
 class Game(object):
 
