@@ -115,16 +115,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print("Current player: " + data.currentPlayer)
             print("Player hands: ")
             for p in data.players:
-                print(p.toString())
+                print(p.toClientString())
             print("Table cards: ")
             for pos in data.tableCards:
                 print(pos + ": [ ")
                 for c in data.tableCards[pos]:
-                    print(c.toString() + " ")
+                    print(c.toClientString() + " ")
                 print("]")
             print("Discard pile: ")
             for c in data.discardPile:
-                print("\t" + c.toString())            
+                print("\t" + c.toClientString())            
             print("Note tokens used: " + str(data.usedNoteTokens) + "/8")
             print("Storm tokens used: " + str(data.usedStormTokens) + "/3")
         if type(data) is GameData.ServerActionInvalid:

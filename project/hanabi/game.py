@@ -13,6 +13,18 @@ class Card(object):
     def toString(self):
         return ("Card " + str(self.id) + "; value: " + str(self.value) + "; color: " + str(self.color))
 
+    def toClientString(self):
+        return ("Card " + str(self.value) + " - " + str(self.color))
+    
+    def __hash__(self):
+        return self.id
+
+    def __eq__(self, other):
+        if not isinstance(other, type(self)):
+            return NotImplemented
+        return self.id == other.id
+
+
 class Token(object):
     def __init__(self, type) -> None:
         super().__init__()
@@ -28,7 +40,6 @@ class Player(object):
         self.name = name
         self.ready = False
         self.hand = []
-        self.score = 0
 
     def takeCard(self, cards):
         self.hand.append(cards.pop())
@@ -38,7 +49,14 @@ class Player(object):
         for card in self.hand:
             c += "\t" + card.toString() + " \n\t"
         c += " ]"
-        return ("Player " + self.name + " { \n\tcards: " + c + "; \n\tscore: " + str(self.score) + "\n}")
+        return ("Player " + self.name + " { \n\tcards: " + c + "\n}")
+
+    def toClientString(self):
+        c = "[ \n\t"
+        for card in self.hand:
+            c += "\t" + card.toClientString() + " \n\t"
+        c += " ]"
+        return ("Player " + self.name + " { \n\tcards: " + c + "\n}")
 
 class Game(object):
 
@@ -168,7 +186,7 @@ class Game(object):
         player = self.__getCurrentPlayer()
         # It's the right turn to perform an action
         if player.name == data.sender:
-            if data.handCardOrdered > len(player.hand) or data.handCardOrdered < 0:
+            if data.handCardOrdered >= len(player.hand) or data.handCardOrdered < 0:
                 return (GameData.ServerActionInvalid("You don't have that many cards!"), None)
             card: Card = player.hand[data.handCardOrdered]
             if not self.__discardCard(card.id, player.name):
@@ -227,13 +245,15 @@ class Game(object):
         if self.__noteTokens == self.__MAX_NOTE_TOKENS:
             logging.warning("All the note tokens have been used. Impossible getting hints")
             return GameData.ServerActionInvalid("All the note tokens have been used"), None
-        self.__noteTokens += 1
         positions = []
         destPlayer: Player = None
         for p in self.__players:
             if p.name == data.destination:
                 destPlayer = p
                 break
+        if destPlayer is None:
+            return GameData.ServerInvalidDataReceived(data="The selected player does not exist"), None
+
         for i in range(len(destPlayer.hand)):
             if data.type == "color" or data.type == "colour":
                 if data.value == destPlayer.hand[i].color:
@@ -248,9 +268,16 @@ class Game(object):
             if data.sender == data.destination:
                 self.__noteTokens -= 1
                 return GameData.ServerInvalidDataReceived(data="Sender cannot be destination!"), None
+
+        if len(positions) == 0:
+            return GameData.ServerInvalidDataReceived(data="You cannot give hints about cards that the other person does not have"), None
         self.__nextTurn()
+        self.__noteTokens += 1
         logging.info("Player " + data.sender + " providing hint to " + data.destination + ": cards with " + data.type + " " + str(data.value) + " are in positions: " + str(positions))
         return None, GameData.ServerHintData(data.sender, data.destination, data.type, data.value, positions)
+
+    def isGameOver(self):
+        return self.__gameOver
 
     # Player functions
     # players list. Not the best, but there are literally max 5 players and the list should give us the order of connection = the order of the rounds
