@@ -20,6 +20,9 @@ statuses = [
 ]
 status = statuses[0]
 
+commandQueue = {}
+
+
 def manageConnection(conn: socket, addr):
     global status
     with conn:
@@ -39,6 +42,7 @@ def manageConnection(conn: socket, addr):
                 if status == "Lobby":
                     if type(data) is GameData.ClientPlayerAddData:
                         playerName = data.sender
+                        commandQueue[playerName] = []
                         playerConnections[playerName] = (conn, addr)
                         logging.info("Player connected: " + playerName)
                         game.addPlayer(playerName)
@@ -64,6 +68,19 @@ def manageConnection(conn: socket, addr):
                     # If every player is ready to send requests, then the game can start
                     if len(playersOk) == len(game.getPlayers()):
                         status = "Game"
+                        for player in commandQueue:
+                            for cmd in commandQueue[player]:
+                                singleData, multipleData = game.satisfyRequest(cmd, player)
+                                if singleData is not None:
+                                    playerConnections[player][0].send(singleData.serialize())
+                                if multipleData is not None:
+                                    for id in playerConnections:
+                                        playerConnections[id][0].send(multipleData.serialize())
+                                        if game.isGameOver():
+                                            os._exit(0)
+                        commandQueue.clear()
+                    else:
+                        commandQueue.append(data)
                 # In game
                 elif status == "Game":
                     singleData, multipleData = game.satisfyRequest(data, playerName)
