@@ -9,12 +9,14 @@ from hanabi.GameAdapter import HintType
 from random import choice
 import sys
 
+
 def tuple_value(tup):
-    if tup == (Color.UNKNOWN, 0):
+    if (Color.UNKNOWN, 0) == tup:
         return 0
     if (tup[0] == Color.UNKNOWN and tup[1] != 0) or (tup[0] != Color.UNKNOWN and tup[1] == 0):
         return 1
     return 2
+
 
 def useful_unknwown_cards(man: GameAdapter):
 
@@ -26,11 +28,15 @@ def useful_unknwown_cards(man: GameAdapter):
 
     options = []
     for player in man.board_state.players:
+        if player.name == man.name:
+            continue
         useful_card = [(i, card) for i, card in enumerate(player.hand) if can_be_played(card)]
         value_of_useful_card = [(player.name, i, card, tuple_value(man.knowledge_state[player.name][i])) for i, card in useful_card]
         options += value_of_useful_card
+
     if not options:
-        return man.players[0], man.knowledge_state[man.players][0]
+        any_player = [pl for pl in man.board_state.players if pl.name != man.name][0]
+        return any_player.hand[0], any_player.name
     card = min(options, key=lambda x: x[3])
 
     return card[2], card[0]
@@ -43,7 +49,8 @@ def main(name='Paolo'):
         'name': name,
         'ip': HOST,
         'port': PORT,
-        'datasize': DATASIZE
+        'datasize': DATASIZE,
+        'nplayers': NPLAYERS
     }
     manager = GameAdapter(**start_dict)
     players = manager.get_other_players()

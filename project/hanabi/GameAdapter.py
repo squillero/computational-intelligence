@@ -1,5 +1,6 @@
 import socket
 import time
+from collections import UserDict
 from typing import Tuple, Union, Dict, List
 
 import GameData
@@ -28,6 +29,28 @@ class Color(Enum):
         return dic[string]
 
 
+class KnowledgeMap(UserDict):
+
+    def __value_tuple(self, tup):
+        if tup == (Color.UNKNOWN, 0):
+            return 0
+        if (tup[0] == Color.UNKNOWN and tup[1] != 0) or (tup[0] != Color.UNKNOWN and tup[1] == 0):
+            return 1
+        return 2
+
+    def __init__(self, player_list: List[str]):
+        self.players = player_list
+        self.num_cards = 4 if len(player_list) > 3 else 5
+        super().__init__({player: [(Color.UNKNOWN, 0)] * self.num_cards for player in player_list})
+
+    def get_known(self, player: str):
+        return [(i, color, value) for i, (color, value) in enumerate(self.data[player]) if (color, value) != (Color.UNKNOWN, 0)]
+
+    def get_cars_sorted(self, player: str):
+        return sorted([(i, color, value) for i, (color, value) in enumerate(self.data[player])],
+                      key=lambda x: self.__value_tuple(x))
+
+
 # noinspection PyTypeChecker
 class GameAdapter:
     """
@@ -35,13 +58,14 @@ class GameAdapter:
     Use it in a for loop to iterate through the game
     """
 
-    def __init__(self, name: str, ip: str = '127.0.0.1', port: int = 1026, datasize: int = 10240):
+    def __init__(self, name: str, *, ip: str = '127.0.0.1', port: int = 1026, datasize: int = 10240, nplayers=2):
         """
         Initialize Game Manager creating a connection with the server
         @param name: Player Name
         @param ip: Host IP
         @param port: Process Port
         @param datasize: Size of the socket packets
+        @param nplayers: number of players to wait in the lobby
         """
         self.name = name
         self.ip = ip
@@ -58,17 +82,15 @@ class GameAdapter:
         assert type(GameData.GameData.deserialize(self.socket.recv(datasize))) is GameData.ServerPlayerConnectionOk
         print("Connection accepted by the server. Welcome " + name)
         print("[" + name + " - " + "Lobby" + "]: ", end="")
-        time.sleep(1)
         self.socket.send(GameData.ClientPlayerStartRequest(name).serialize())
         data = GameData.GameData.deserialize(self.socket.recv(datasize))
         assert type(data) is GameData.ServerPlayerStartRequestAccepted
-        time.sleep(0.1)
         #print("Ready: " + str(data.acceptedStartRequests) + "/" + str(data.connectedPlayers) + " players")
         data = GameData.GameData.deserialize(self.socket.recv(datasize))
         assert type(data) is GameData.ServerStartGameData
         self.socket.send(GameData.ClientPlayerReadyData(name).serialize())
         self.players = tuple(data.players)
-        self.knowledge_state = {name: [(Color.UNKNOWN, 0)] * (4 if len(self.players) > 3 else 5) for name in self.players}
+        self.knowledge_state = KnowledgeMap(self.players)
 
     def _request_state(self) -> GameData.ServerGameStateData:
         """
@@ -76,8 +98,7 @@ class GameAdapter:
         """
         self.socket.send(GameData.ClientGetGameStateRequest(self.name).serialize())
         while self._register_action(GameData.GameData.deserialize(self.socket.recv(self.datasize))) is not GameData.ServerGameStateData:
-            if self.game_end:
-                raise StopIteration
+            pass
 
     def __iter__(self):
         """
@@ -97,12 +118,19 @@ class GameAdapter:
             raise StopIteration
 
         print(f"{self.name} has requested state")
-        self._request_state()
+        try:
+            self._request_state()
+        except ConnectionResetError:
+            raise StopIteration
         print(f"{self.name} has recieved state")
         while self.board_state.currentPlayer != self.name:
-            response = GameData.GameData.deserialize(self.socket.recv(self.datasize))
-            self._register_action(response)
-            self._request_state()
+            try:
+                response = GameData.GameData.deserialize(self.socket.recv(self.datasize))
+                self._register_action(response)
+                self._request_state()
+            except ConnectionResetError:
+                raise StopIteration
+
 
         return self.board_state, self.move_history
 
@@ -113,7 +141,10 @@ class GameAdapter:
         @return: GameData
         """
         self.socket.send(action.serialize())
-        response = GameData.GameData.deserialize(self.socket.recv(self.datasize))
+        try:
+            response = GameData.GameData.deserialize(self.socket.recv(self.datasize))
+        except ConnectionResetError:
+            raise StopIteration
         self._register_action(response)
         return response
 
@@ -144,6 +175,7 @@ class GameAdapter:
 
         elif type(response) is GameData.ServerGameOver:
             self.game_end = True
+            raise StopIteration
 
         return type(response)
 
@@ -165,7 +197,11 @@ class GameAdapter:
         @return: True if the hint was sent successfully
         """
         type_h = {HintType.NUMBER: 'value', HintType.COLOR: 'colour'}[type_h]
-        result = self._send_action(GameData.ClientHintData(self.name, player, type_h, val))
+        try:
+            result = self._send_action(GameData.ClientHintData(self.name, player, type_h, val))
+        except StopIteration:
+            return False
+
         if type(result) is GameData.ServerActionInvalid:
             return False
         if type(result) is GameData.ServerHintData:
@@ -178,7 +214,10 @@ class GameAdapter:
         @param card_number: index of the card
         @return: True if the card was correct False otherwise
         """
-        result = self._send_action(GameData.ClientPlayerPlayCardRequest(self.name, card_number))
+        try:
+            result = self._send_action(GameData.ClientPlayerPlayCardRequest(self.name, card_number))
+        except StopIteration:
+            return False
         if type(result) is GameData.ServerPlayerMoveOk:
             return True
         if type(result) is GameData.ServerPlayerThunderStrike:
@@ -191,7 +230,11 @@ class GameAdapter:
         @param card_number: card index
         @return: if the card was successfully discarded
         """
-        result = self._send_action(GameData.ClientPlayerDiscardCardRequest(self.name, card_number))
+        try:
+            result = self._send_action(GameData.ClientPlayerDiscardCardRequest(self.name, card_number))
+        except StopIteration:
+            return False
+
         if type(result) is GameData.ServerActionValid:
             return True
         if type(result) is GameData.ServerActionInvalid:
