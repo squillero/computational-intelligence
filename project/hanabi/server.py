@@ -80,7 +80,7 @@ def manageConnection(conn: socket, addr):
                                             os._exit(0)
                         commandQueue.clear()
                     else:
-                        commandQueue.append(data)
+                        commandQueue[playerName].append(data)
                 # In game
                 elif status == "Game":
                     singleData, multipleData = game.satisfyRequest(data, playerName)
