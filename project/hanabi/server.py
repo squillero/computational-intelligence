@@ -79,7 +79,7 @@ def manageConnection(conn: socket, addr):
                                         if game.isGameOver():
                                             os._exit(0)
                         commandQueue.clear()
-                    else:
+                    elif type(data) is not GameData.ClientPlayerAddData and type(data) is not GameData.ClientPlayerStartRequest and type(data) is not GameData.ClientPlayerReadyData:
                         commandQueue[playerName].append(data)
                 # In game
                 elif status == "Game":

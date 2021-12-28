@@ -196,7 +196,7 @@ class Game(object):
                 self.__drawCard(player.name)
                 logging.info("Player: " + self.__getCurrentPlayer().name + ": card " + str(card.id) + " discarded successfully")
                 self.__nextTurn()
-                return (None, GameData.ServerActionValid(self.__getCurrentPlayer().name, "discard", card))
+                return (None, GameData.ServerActionValid(self.__getCurrentPlayer().name, player.name, "discard", card, data.handCardOrdered))
         else:
             return (GameData.ServerActionInvalid("It is not your turn yet"), None)
 
@@ -224,7 +224,7 @@ class Game(object):
                 return (None, GameData.ServerGameOver(self.__score, self.__scoreMessages[self.__score]))
             if not ok:
                 self.__nextTurn()
-                return (None, GameData.ServerPlayerThunderStrike(self.__getCurrentPlayer().name, card))
+                return (None, GameData.ServerPlayerThunderStrike(self.__getCurrentPlayer().name, p.name, card, data.handCardOrdered))
             else:
                 logging.info(self.__getCurrentPlayer().name + ": card played and correctly put on the table")
                 if card.value == 5:
@@ -234,7 +234,7 @@ class Game(object):
                     logging.info("Giving 1 free note token.")
                 self.__nextTurn()
                 self.__gameOver, self.__score = self.__checkGameEnded()
-                return (None, GameData.ServerPlayerMoveOk(self.__getCurrentPlayer().name, card))
+                return (None, GameData.ServerPlayerMoveOk(self.__getCurrentPlayer().name, p.name, card, data.handCardOrdered))
         else:
             return (GameData.ServerActionInvalid("It is not your turn yet"), None)
 
