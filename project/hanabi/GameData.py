@@ -173,17 +173,20 @@ class ServerGameStateData(ServerToClientData):
 
 class ServerActionValid(ServerToClientData):
     '''
-    Action well performed
+    Action well performed.
     player: the current player.
     lastPlayer: the player that made the last move.
-    action: the actino occurred. Now it is only "discard"
+    action: the actino occurred. Now it is only "discard".
     move: the last move that occurred.
+    cardHandIndex: the card index of the lastPlayer played card, given his hand order.
+
     '''
-    def __init__(self, player: str, lastPlayer: str, action: str, card) -> None:
+    def __init__(self, player: str, lastPlayer: str, action: str, card, cardHandIndex: int) -> None:
         action = "Valid action performed"
         self.action = action
         self.card = card
         self.lastPlayer = lastPlayer
+        self.cardHandIndex = cardHandIndex
         self.player = player
         super().__init__(action)
 
@@ -193,10 +196,12 @@ class ServerPlayerMoveOk(ServerToClientData):
     player: the current player.
     lastPlayer: the player that made the last move.
     card: the last card played.
+    cardHandIndex: the card index of the lastPlayer played card, given his hand order.
     '''
-    def __init__(self, player: str, lastPlayer: str, card) -> None:
+    def __init__(self, player: str, lastPlayer: str, card, cardHandIndex: int) -> None:
         action = "Correct move! Well done!"
         self.card = card
+        self.cardHandIndex = cardHandIndex
         self.lastPlayer = lastPlayer
         self.player = player
         super().__init__(action)
@@ -206,13 +211,16 @@ class ServerPlayerThunderStrike(ServerToClientData):
     Play move well performed, unsuccessful in game terms.
     Adds a red note on the server.
     player: the current player.
-    lastPlayer: the player that made the last move
-    card: the card that was just discarded
+    lastPlayer: the player that made the last move.
+    card: the card that was just discarded.
+    cardHandIndex: the card index of the lastPlayer played card, given his hand order.
+
     '''
-    def __init__(self, player: str, lastPlayer: str, card) -> None:
+    def __init__(self, player: str, lastPlayer: str, card, cardHandIndex: int) -> None:
         action = "The Gods are angry at you!"
         self.player = player
         self.lastPlayer = lastPlayer
+        self.cardHandIndex = cardHandIndex
         self.card = card
         super().__init__(action)
 
