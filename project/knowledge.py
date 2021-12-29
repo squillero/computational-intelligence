@@ -10,10 +10,17 @@ import sys
 
 class KnowledgeMap:
 	"""
-		players: use GameAdapter.get_all_players()
-		name: name of the playing player
+	Contains information about other players hands
+	WARNING: this class does not know if the players have less cards in the hand
+	than the maximum number of holdable cards(this happens only in end game)
+	More information on getPlayerHand description
 	"""
+
 	def __init__(self, players, name):
+		"""
+		@param players: list of all players, obtained with GameAdapter.get_all_players()
+		@param name: str, name of the playing player
+		"""
 		self.name = name
 		self.numPlayers = len(players)
 		self.numCards = 4 if self.numPlayers > 3 else 5
@@ -47,16 +54,16 @@ class KnowledgeMap:
 					card[val, :] = False
 
 	def __updateMatrix(self, move):
-		self.matrix[Color.fromstr(move.card.color).value, move.card.value-1] -= 1
+		self.matrix[Color.fromstr(move.card.color).value, move.card.value - 1] -= 1
 		self.hands[move.lastPlayer].pop(move.cardHandIndex)
 		self.hands[move.lastPlayer].append(np.ones((self.numCards, self.numCards)))
 
-	"""
-		Updates the hands of all players looking at the move_history 
-		Call this at the start of each iteration (your turn)
-	"""
 	def updateHands(self, move_history):
-
+		"""
+			Updates the hands of all players looking at the move_history
+			Call this at the start of each iteration (your turn)
+			@param move_history: move_history from GameAdapter
+		"""
 		for i in reversed(range(self.numPlayers)):
 			if i < len(move_history):
 				if type(move_history[-i]) is GameData.ServerHintData:
@@ -64,12 +71,17 @@ class KnowledgeMap:
 				elif type(move_history[-i]) in \
 						[GameData.ServerPlayerMoveOk, GameData.ServerPlayerThunderStrike, GameData.ServerActionValid]:
 					self.__updateMatrix(move_history[-i])
-	"""
-		target: the player name (string) you want to inspect
-		players: state.players
-		returns a list of 5x5 matrixes with the probability of each card
-	"""
+
 	def getPlayerHand(self, target, players):
+		"""
+			Compute probability matrix for each card in the target plater's hand
+			@param target: the player name (string) you want to inspect
+			@param players: state.players
+			@return: list(5x5 numpy array)
+			In case of less cards in the hand than the maximum number of holdable cards
+			the list returned is still as long as the maximum number of cards
+			but you should ignore the elements of non-existing cards
+		"""
 		tmpMatrix = self.matrix.copy()
 		for player in players:
 			if player.name != target:
@@ -87,9 +99,6 @@ class KnowledgeMap:
 		# 			mtx: np.ndarray = np.where(self.hands[target][card], self.matrix, 0)
 		# 			return mtx / mtx.sum()
 
-		for m in self.hands[target]:
-			x = tmpMatrix * m
-			y = (tmpMatrix * m).sum()
-			z = x/y
 
-		return [tmpMatrix*m / (tmpMatrix*m).sum() for m in self.hands[target]]
+
+		return [tmpMatrix * m / (tmpMatrix * m).sum() for m in self.hands[target]]

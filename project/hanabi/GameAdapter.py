@@ -141,9 +141,6 @@ class GameAdapter:
         self.socket.send(action.serialize())
         try:
             response = GameData.GameData.deserialize(self.socket.recv(self.datasize))
-            # lascio commentato ma non dovrebbe servire, crea duplicati
-            # if type(response) in [GameData.ServerPlayerMoveOk, GameData.ServerPlayerThunderStrike, GameData.ServerActionValid, GameData.ServerHintData]:
-            #     self.move_history.append(response)
         except ConnectionResetError:
             raise StopIteration
         self._register_action(response)
