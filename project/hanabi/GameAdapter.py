@@ -1,6 +1,7 @@
 import socket
 import time
 from collections import UserDict
+from dataclasses import dataclass
 from typing import Tuple, Union, Dict, List
 
 import GameData
@@ -15,13 +16,12 @@ class HintType(Enum):
 
 
 class Color(Enum):
-    UNKNOWN = 0
-    RED = 1
-    BLUE = 2
-    GREEN = 3
-    YELLOW = 4
-    WHITE = 5
-
+    RED = 0
+    BLUE = 1
+    GREEN = 2
+    YELLOW = 3
+    WHITE = 4
+    UNKNOWN = 5
     @staticmethod
     def fromstr(string: str):
         string = string.lower()
@@ -49,8 +49,6 @@ class KnowledgeMap(UserDict):
     def get_cars_sorted(self, player: str):
         return sorted([(i, color, value) for i, (color, value) in enumerate(self.data[player])],
                       key=lambda x: self.__value_tuple(x))
-
-
 # noinspection PyTypeChecker
 class GameAdapter:
     """
@@ -153,7 +151,6 @@ class GameAdapter:
         if type(response) is GameData.ServerGameStateData:
             response: GameData.ServerGameStateData
             self.board_state = response
-            return type(response)
 
         elif type(response) is GameData.ServerHintData:
             response: GameData.ServerHintData
@@ -173,11 +170,22 @@ class GameAdapter:
             if position:
                 self.knowledge_state[response.player][position[0]] = (Color.UNKNOWN, 0)
 
+        elif type(response) is GameData.ServerActionValid:
+            response: GameData.ServerActionValid
+            self.move_history.append(response)
+
         elif type(response) is GameData.ServerGameOver:
             self.game_end = True
             raise StopIteration
 
         return type(response)
+
+    def get_all_players(self):
+        """
+        Get all players
+        @return: tuple(str)
+        """
+        return list(self.players)
 
     def get_other_players(self):
         """
@@ -202,7 +210,7 @@ class GameAdapter:
         except StopIteration:
             return False
 
-        if type(result) is GameData.ServerActionInvalid:
+        if type(result) in [GameData.ServerActionInvalid, GameData.ServerInvalidDataReceived]:
             return False
         if type(result) is GameData.ServerHintData:
             return True
