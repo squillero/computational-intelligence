@@ -8,6 +8,7 @@ import GameData
 from enum import Enum
 
 import game
+import knowledge
 
 
 class HintType(Enum):
@@ -29,7 +30,7 @@ class Color(Enum):
         return dic[string]
 
 
-class KnowledgeMap(UserDict):
+class KnowledgeMap2(UserDict):
 
     def __value_tuple(self, tup):
         if tup == (Color.UNKNOWN, 0):
@@ -88,7 +89,8 @@ class GameAdapter:
         assert type(data) is GameData.ServerStartGameData
         self.socket.send(GameData.ClientPlayerReadyData(name).serialize())
         self.players = tuple(data.players)
-        self.knowledge_state = KnowledgeMap(self.players)
+        self.knowledgeMap = knowledge.KnowledgeMap(list(self.players), self.name)
+        self.knowledge_state =  KnowledgeMap2(list(self.players))
 
     def _request_state(self) -> GameData.ServerGameStateData:
         """
@@ -129,7 +131,7 @@ class GameAdapter:
             except ConnectionResetError:
                 raise StopIteration
 
-
+        self.knowledgeMap.updateHands(self.move_history, self.board_state)
         return self.board_state, self.move_history
 
     def _send_action(self, action: GameData.ClientToServerData):
