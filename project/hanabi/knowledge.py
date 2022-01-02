@@ -41,6 +41,8 @@ class KnowledgeMap:
 		self.numMoves = 0
 		self.tableCards = []
 		self.discardPile = []
+		self.usedNoteTokens = 0
+		self.usedStormTokens = 0
 		self.hands = {}
 		self.hints = {}
 		for player in players:
@@ -83,7 +85,8 @@ class KnowledgeMap:
 
 		self.discardPile = state.discardPile
 		self.tableCards = state.tableCards
-		x = len(move_history) - self.numMoves + 1
+		self.usedNoteTokens = state.usedNoteTokens
+		self.usedStormTokens = state.usedStormTokens
 		for i in reversed(range(len(move_history) - self.numMoves + 1)):
 			if i > 0:
 				if type(move_history[-i]) is GameData.ServerHintData:
@@ -96,11 +99,12 @@ class KnowledgeMap:
 		self.numMoves = len(move_history)
 
 
-	def getPlayerHand(self, target):
+	def getPlayerHand(self, target, probability=True):
 		"""
 			Compute probability matrix for each card in the target plater's hand
 			@param target: the player name (string) you want to inspect
 			@param players: state.players from GameAdapter
+			@param probability: if true returns probabilities, otherwise cards
 			@return: list(5x5 numpy array)
 			In case of less cards in the hand than the maximum number of holdable cards
 			the list returned is still as long as the maximum number of cards
@@ -108,11 +112,13 @@ class KnowledgeMap:
 		"""
 		tmpMatrix = self.matrix.copy()
 		for player in self.players:
-			if player.name != target:
+			if player != target and player != self.name:
 				for card in self.hands[player]:
 					tmpMatrix[Color.fromstr(card.color).value, card.value - 1] -= 1
-
-		return [tmpMatrix * m / (tmpMatrix * m).sum() for m in self.hints[target]]
+		if probability:
+			return [tmpMatrix * m / (tmpMatrix * m).sum() for m in self.hints[target]]
+		else:
+			return [tmpMatrix * m for m in self.hints[target]]
 
 	def getPlayerName(self):
 		return self.name
@@ -128,6 +134,12 @@ class KnowledgeMap:
 
 	def getPlayerHands(self):
 		return self.hands
+
+	def getStormTokens(self):
+		return self.usedStormTokens
+
+	def getNoteTokens(self):
+		return self.usedNoteTokens
 
 	def getOnePlayerHand(self, target):
 		"""
