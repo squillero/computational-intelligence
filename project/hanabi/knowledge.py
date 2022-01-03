@@ -1,5 +1,4 @@
 from enum import Enum
-import project.hanabi.GameData
 import numpy as np
 
 
@@ -98,11 +97,14 @@ class KnowledgeMap:
 		self.usedStormTokens = state.usedStormTokens
 		for i in reversed(range(len(move_history) - self.numMoves + 1)):
 			if i > 0:
-				if type(move_history[-i]) is project.hanabi.GameData.ServerHintData:
+				moveType = str(type(move_history[-i])).split(".")
+				moveType = moveType[len(moveType) - 1][:-2]
+				if moveType == "ServerHintData":
 					self.__updateHint(move_history[-i].destination, move_history[-i])
-				elif type(move_history[-i]) in \
-					[project.hanabi.GameData.ServerPlayerMoveOk, project.hanabi.GameData.ServerPlayerThunderStrike, \
-					project.hanabi.GameData.ServerActionValid]:
+				elif moveType in \
+					["ServerPlayerMoveOk",
+					"ServerPlayerThunderStrike",
+					"ServerActionValid"]:
 					self.__updateMatrix(move_history[-i])
 		for player in state.players:
 			self.hands[player.name] = player.hand
