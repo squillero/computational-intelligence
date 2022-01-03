@@ -229,9 +229,9 @@ class Game(object):
                 logging.info(self.__getCurrentPlayer().name + ": card played and correctly put on the table")
                 if card.value == 5:
                     logging.info(card.color + " pile has been filled.")
-                if self.__noteTokens > 0:
-                    self.__noteTokens -= 1
-                    logging.info("Giving 1 free note token.")
+                    if self.__noteTokens > 0:
+                        self.__noteTokens -= 1
+                        logging.info("Giving 1 free note token.")
                 self.__nextTurn()
                 self.__gameOver, self.__score = self.__checkGameEnded()
                 return (None, GameData.ServerPlayerMoveOk(self.__getCurrentPlayer().name, p.name, card, data.handCardOrdered))
