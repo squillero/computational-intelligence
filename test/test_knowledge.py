@@ -1,7 +1,7 @@
 import unittest
 import numpy as np
-import project.hanabi.GameData as GameData
-import project.hanabi.knowledge as knowledge
+from project.hanabi.GameData import ServerHintData, ServerActionValid, ServerPlayerThunderStrike
+from project.hanabi.knowledge import KnowledgeMap
 
 
 class Card:
@@ -33,16 +33,16 @@ class State:
 class KnowledgeTest(unittest.TestCase):
 	def test_hint(self):
 		move_history_hints = [
-			GameData.ServerHintData("p0", 'p2', 'color', 'red', [0, 3]),
-			GameData.ServerHintData("p0", 'p3', 'value', 1, [1, 2]),
-			GameData.ServerHintData("p0", 'p4', 'value', 3, [0, 3]),
-			GameData.ServerHintData("p0", 'p1', 'color', 'red', [1]),
-			GameData.ServerHintData("p0", 'p1', 'color', 'green', [2]),
-			GameData.ServerHintData("p0", 'p1', 'value', 1, [2])
+			ServerHintData("p0", 'p2', 'color', 'red', [0, 3]),
+			ServerHintData("p0", 'p3', 'value', 1, [1, 2]),
+			ServerHintData("p0", 'p4', 'value', 3, [0, 3]),
+			ServerHintData("p0", 'p1', 'color', 'red', [1]),
+			ServerHintData("p0", 'p1', 'color', 'green', [2]),
+			ServerHintData("p0", 'p1', 'value', 1, [2])
 		]
 		state = State()
 
-		kmap = knowledge.KnowledgeMap(['p1', 'p2', 'p3', 'p4'], 'p1')
+		kmap = KnowledgeMap(['p1', 'p2', 'p3', 'p4'], 'p1')
 		kmap.updateHands(move_history_hints, state)
 		p1 = kmap.getPlayerHand("p1", False)
 		p2 = kmap.getPlayerHand("p2", False)
@@ -150,11 +150,11 @@ class KnowledgeTest(unittest.TestCase):
 	def test_play_discard(self):
 		state = State()
 		move_history_play = [
-			GameData.ServerPlayerThunderStrike(player="p0", lastPlayer="p3", card=Card(5, 'blue'), cardHandIndex=1),
-			GameData.ServerActionValid(player="p0", lastPlayer="p4", action="a", card=Card(4, 'green'), cardHandIndex=0),
-			GameData.ServerActionValid(player="p0", lastPlayer="p2", action="a", card=Card(2, 'red'), cardHandIndex=3)
+			ServerPlayerThunderStrike(player="p0", lastPlayer="p3", card=Card(5, 'blue'), cardHandIndex=1),
+			ServerActionValid(player="p0", lastPlayer="p4", action="a", card=Card(4, 'green'), cardHandIndex=0),
+			ServerActionValid(player="p0", lastPlayer="p2", action="a", card=Card(2, 'red'), cardHandIndex=3)
 		]
-		kmap = knowledge.KnowledgeMap(['p1', 'p2', 'p3', 'p4'], 'p1')
+		kmap = KnowledgeMap(['p1', 'p2', 'p3', 'p4'], 'p1')
 		kmap.updateHands(move_history_play, state)
 		mapx = np.array([[3, 1, 2, 2, 1],
 						[3, 2, 2, 2, 0],
