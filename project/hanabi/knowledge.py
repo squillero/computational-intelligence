@@ -1,10 +1,21 @@
-import GameData
-from constants import *
-from GameAdapter import HintType, Color
-from random import choice
+from enum import Enum
+import project.hanabi.GameData
 import numpy as np
-from collections import deque
-import sys
+
+
+class Color(Enum):
+	RED = 0
+	BLUE = 1
+	GREEN = 2
+	YELLOW = 3
+	WHITE = 4
+	UNKNOWN = 5
+
+	@staticmethod
+	def fromstr(string: str):
+		string = string.lower()
+		dic = {"red": Color.RED, "blue": Color.BLUE, "green": Color.GREEN, "yellow": Color.YELLOW, "white": Color.WHITE}
+		return dic[string]
 
 
 class KnowledgeMap:
@@ -50,7 +61,6 @@ class KnowledgeMap:
 			for _ in range(self.numCards):
 				self.hints[player].append(np.ones((5, 5), dtype=bool))
 
-
 	def __updateHint(self, player, move):
 		for i, card in enumerate(self.hints[player]):
 			val = move.value - 1 if move.type == 'value' else Color.fromstr(move.value).value
@@ -82,28 +92,26 @@ class KnowledgeMap:
 			@param state: board_state from GameAdapter
 		"""
 
-
 		self.discardPile = state.discardPile
 		self.tableCards = state.tableCards
 		self.usedNoteTokens = state.usedNoteTokens
 		self.usedStormTokens = state.usedStormTokens
 		for i in reversed(range(len(move_history) - self.numMoves + 1)):
 			if i > 0:
-				if type(move_history[-i]) is GameData.ServerHintData:
+				if type(move_history[-i]) is project.hanabi.GameData.ServerHintData:
 					self.__updateHint(move_history[-i].destination, move_history[-i])
 				elif type(move_history[-i]) in \
-						[GameData.ServerPlayerMoveOk, GameData.ServerPlayerThunderStrike, GameData.ServerActionValid]:
+					[project.hanabi.GameData.ServerPlayerMoveOk, project.hanabi.GameData.ServerPlayerThunderStrike, \
+					project.hanabi.GameData.ServerActionValid]:
 					self.__updateMatrix(move_history[-i])
 		for player in state.players:
 			self.hands[player.name] = player.hand
 		self.numMoves = len(move_history)
 
-
-	def getPlayerHand(self, target, probability=True):
+	def getProbabilityMatrix(self, target, probability=True):
 		"""
 			Compute probability matrix for each card in the target plater's hand
 			@param target: the player name (string) you want to inspect
-			@param players: state.players from GameAdapter
 			@param probability: if true returns probabilities, otherwise cards
 			@return: list(5x5 numpy array)
 			In case of less cards in the hand than the maximum number of holdable cards
@@ -130,9 +138,15 @@ class KnowledgeMap:
 		return self.discardPile
 
 	def getPlayerList(self):
+		"""
+		@return list(str)
+		"""
 		return self.players
 
 	def getPlayerHands(self):
+		"""
+		@return dict(key=playerName, value=list(Card))
+		"""
 		return self.hands
 
 	def getStormTokens(self):
@@ -144,5 +158,6 @@ class KnowledgeMap:
 	def getOnePlayerHand(self, target):
 		"""
 		@param target: string with name of the player to inspect
+		@return list(Card)
 		"""
 		return self.hands[target]

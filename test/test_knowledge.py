@@ -18,14 +18,12 @@ class Player:
 
 class State:
 	def __init__(self):
-		self.discardPile = [Card(2, 'red'), Card(5, 'blue'), Card(4, 'green')]
-		self.tableCards = [Card(4, 'blue')]
 		p2 = Player('p2', [Card(1, 'red'), Card(4, 'blue'), Card(3, 'white'), Card(2, 'red')])
 		p3 = Player('p3', [Card(4, 'white'), Card(1, 'blue'), Card(1, 'green'), Card(5, 'green')])
 		p4 = Player('p4', [Card(3, 'red'), Card(4, 'blue'), Card(1, 'green'), Card(3, 'yellow')])
 		self.players = [p2, p3, p4]
-		self.discardPile = [2]
-		self.tableCards = [2]
+		self.discardPile = []
+		self.tableCards = []
 		self.usedNoteTokens = 1
 		self.usedStormTokens = 1
 
@@ -44,10 +42,10 @@ class KnowledgeTest(unittest.TestCase):
 
 		kmap = knowledge.KnowledgeMap(['p1', 'p2', 'p3', 'p4'], 'p1')
 		kmap.updateHands(move_history_hints, state)
-		p1 = kmap.getPlayerHand("p1", False)
-		p2 = kmap.getPlayerHand("p2", False)
-		p3 = kmap.getPlayerHand("p3", False)
-		p4 = kmap.getPlayerHand("p4", False)
+		p1 = kmap.getProbabilityMatrix("p1", False)
+		p2 = kmap.getProbabilityMatrix("p2", False)
+		p3 = kmap.getProbabilityMatrix("p3", False)
+		p4 = kmap.getProbabilityMatrix("p4", False)
 
 		p1x = [
 			np.array([[0, 0, 0, 0, 0],
@@ -140,8 +138,8 @@ class KnowledgeTest(unittest.TestCase):
 					[0, 0, 2, 0, 0],
 					[0, 0, 1, 0, 0]]),
 		]
-
 		for i in range(4):
+
 			self.assertTrue((p1[i] == p1x[i]).all())
 			self.assertTrue((p2[i] == p2x[i]).all())
 			self.assertTrue((p3[i] == p3x[i]).all())
