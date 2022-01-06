@@ -242,6 +242,8 @@ class Game(object):
     def __satisfyHintRequest(self, data: GameData.ClientHintData):
         if self.__getCurrentPlayer().name != data.sender:
             return (GameData.ServerActionInvalid("It is not your turn yet"), None)
+        if data.destination == data.sender:
+            return (GameData.ServerActionInvalid("You are giving a suggestion to yourself! Bad!"), None)
         if self.__noteTokens == self.__MAX_NOTE_TOKENS:
             logging.warning("All the note tokens have been used. Impossible getting hints")
             return GameData.ServerActionInvalid("All the note tokens have been used"), None
