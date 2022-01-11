@@ -183,7 +183,6 @@ class Game(object):
             return self.__dataActions[type(data)](data)
         else:
             return GameData.ServerInvalidDataReceived(data), None
-
     # Draw request
     def __satisfyDiscardRequest(self, data: GameData.ClientPlayerDiscardCardRequest):
         player = self.__getCurrentPlayer()
@@ -431,3 +430,6 @@ class Game(object):
     
     def getPlayers(self):
         return self.__players
+
+    def getScore(self):
+        return self.__score
