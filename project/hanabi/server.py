@@ -106,6 +106,7 @@ def manageConnection(conn: socket, addr):
                                 for player in players:
                                     logging.info("Starting new game")
                                     game.addPlayer(player.name)
+                                game.start()
             mutex.release()
 
 
