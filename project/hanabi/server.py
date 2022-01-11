@@ -2,6 +2,7 @@ import os
 import GameData
 import socket
 from game import Game
+from game import Player
 import threading
 from constants import *
 import logging
@@ -104,7 +105,7 @@ def manageConnection(conn: socket, addr):
                                 game = Game()
                                 for player in players:
                                     logging.info("Starting new game")
-                                    game.addPlayer(player)
+                                    game.addPlayer(player.name)
             mutex.release()
 
 
