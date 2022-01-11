@@ -98,7 +98,7 @@ def manageConnection(conn: socket, addr):
                             playerConnections[id][0].send(multipleData.serialize())
                             if game.isGameOver():
                                 logging.info("Game over")
-                                logging.info("Game score: " + game.getScore())
+                                logging.info("Game score: " + str(game.getScore()))
                                 #os._exit(0)
                                 players = game.getPlayers()
                                 game = Game()
