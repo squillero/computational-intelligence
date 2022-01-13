@@ -1,17 +1,32 @@
 # Data to be passed from client to server
 import pickle
 
+from constants import DATASIZE
+
 # Generic object
 class GameData(object):
     def __init__(self, sender) -> None:
         super().__init__()
         self.sender = sender
 
-    def serialize(self) -> str:
-        return pickle.dumps(self)
+    def serialize(self) -> bytes:
+        data = pickle.dumps(self)
+        datalen = len(data)
+        binaryDataLen: bytes  = datalen.to_bytes(2, 'little')
+        totdata = bytearray(binaryDataLen) + data
+        #ensure no multiple data on same request
+        for _ in range(datalen + len(binaryDataLen), DATASIZE):
+            totdata.append(0)
+        data = bytes(totdata)
+        assert(len(data) == DATASIZE)
+        return data
 
-    def deserialize(serialized: str):
-        return pickle.loads(serialized)
+    def deserialize(serialized: bytes):
+        binarySize = serialized[0:2]
+        assert(len(binarySize) == 2)
+        datasize = int.from_bytes(binarySize, 'little')
+        data = serialized[2:datasize + 2]
+        return pickle.loads(data)
 
 
 # Client to server
