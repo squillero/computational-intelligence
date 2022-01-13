@@ -73,7 +73,6 @@ class Game(object):
         "AMAZING!"
     ]
     __cards = []  # cards are the same for everyone
-    __cardsInitialized = False
     __MAX_NOTE_TOKENS = 8
     __MAX_STORM_TOKENS = 3
     __MAX_FIREWORKS = 5
@@ -82,10 +81,9 @@ class Game(object):
         super().__init__()
         self.__discardPile = []
         # Init cards
-        numCards = 0
-        if not self.__cardsInitialized:
-            self.__cardsInitialized = True
-            self.__gameOver = False
+        self.__gameOver = False
+        if len(self.__cards) == 0:
+            numCards = 0
             for _ in range(3):
                 self.__cards.append(Card(numCards, 1, "red"))
                 numCards += 1
