@@ -81,7 +81,6 @@ class Game(object):
     def __init__(self) -> None:
         super().__init__()
         self.__discardPile = []
-        self.__completedFireworks = 0
         # Init cards
         numCards = 0
         if not self.__cardsInitialized:
@@ -163,6 +162,8 @@ class Game(object):
 
         # init game
         self.__started = False
+        self.__lastTurn = False
+        self.__lastMoves = 0
 
         # score
         self.__score = 0
@@ -180,7 +181,20 @@ class Game(object):
         if type(data) in self.__dataActions:
             if type(data) == GameData.ClientGetGameStateRequest:
                 data.sender = playerName
-            return self.__dataActions[type(data)](data)
+            result = self.__dataActions[type(data)](data)
+            if type(data) != GameData.ClientGetGameStateRequest:
+                if len(self.__cardsToDraw) == 0:
+                    self.__lastTurn = True
+                    self.__lastMoves -= 1
+            self.__gameOver, self.__score = self.__checkGameEnded()
+            if self.__gameOver:
+                logging.info("Game over, people.")
+                logging.info("Please, close the server now")
+                logging.info("Score: " + str(self.__score) + "; message: " +
+                             self.__scoreMessages[self.__score // len(self.__scoreMessages)])  # ! BUGFIX index
+                # ! BUGFIX index
+                return (None, GameData.ServerGameOver(self.__score, self.__scoreMessages[self.__score // len(self.__scoreMessages)]))
+            return result
         else:
             return GameData.ServerInvalidDataReceived(data), None
     # Draw request
@@ -222,14 +236,6 @@ class Game(object):
             card: Card = p.hand[data.handCardOrdered]
             self.__playCard(p.name, data.handCardOrdered)
             ok = self.__checkTableCards()
-            self.__gameOver, self.__score = self.__checkGameEnded()
-            if self.__gameOver:
-                logging.info("Game over, people.")
-                logging.info("Please, close the server now")
-                logging.info("Score: " + str(self.__score) + "; message: " +
-                             self.__scoreMessages[self.__score // len(self.__scoreMessages)])  # ! BUGFIX index
-                # ! BUGFIX index
-                return (None, GameData.ServerGameOver(self.__score, self.__scoreMessages[self.__score // len(self.__scoreMessages)]))
             if not ok:
                 self.__nextTurn()
                 # ! ADDED last param. see GameData relative comment of GameData.ServerPlayerThunderStrike
@@ -322,6 +328,7 @@ class Game(object):
         self.__currentPlayer %= len(self.__players)
 
     def start(self):
+        self.__lastMoves = len(self.__players) + 1
         shuffle(self.__cardsToDraw)
         if len(self.__players) < 2:
             logging.warning("Not enough players!")
@@ -417,9 +424,7 @@ class Game(object):
             return True, score
         if self.__stormTokens == self.__MAX_STORM_TOKENS:
             return True, 0
-        ended = True
-        for player in self.__players:
-            ended = ended and ((len(player.hand) < 5 and len(self.__players) <= 3) or len(player.hand) < 4)
+        ended = self.__lastTurn and self.__lastMoves == 0
         if ended:
             score = 0
             for pile in self.__tableCards:

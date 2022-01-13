@@ -24,6 +24,7 @@ status = statuses[0]
 commandQueue = {}
 numPlayers = 2
 
+
 def manageConnection(conn: socket, addr):
     global status
     global game
@@ -34,7 +35,6 @@ def manageConnection(conn: socket, addr):
         while keepActive:
             print("SERVER WAITING")
             data = conn.recv(DATASIZE)
-            print(f"SERVER PROCESSING {GameData.GameData.deserialize(data)}")
             mutex.acquire(True)
             if not data:
                 del playerConnections[playerName]
@@ -45,6 +45,7 @@ def manageConnection(conn: socket, addr):
                     os._exit(0)
                 keepActive = False
             else:
+                print(f"SERVER PROCESSING {GameData.GameData.deserialize(data)}")
                 data = GameData.GameData.deserialize(data)
                 print(f"SERVER RECEIVED {type(data)} from {data.sender}")
                 if status == "Lobby":
