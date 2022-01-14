@@ -52,6 +52,9 @@ def manageConnection(conn: socket, addr):
                     if type(data) is GameData.ClientPlayerAddData:
                         playerName = data.sender
                         commandQueue[playerName] = []
+                        if playerName in playerConnections.keys():
+                            conn.send(GameData.ServerActionInvalid("Player already registered."))
+                            return
                         playerConnections[playerName] = (conn, addr)
                         logging.info("Player connected: " + playerName)
                         game.addPlayer(playerName)
