@@ -196,6 +196,7 @@ class Game(object):
         else:
             return GameData.ServerInvalidDataReceived(data), None
     # Draw request
+
     def __satisfyDiscardRequest(self, data: GameData.ClientPlayerDiscardCardRequest):
         player = self.__getCurrentPlayer()
         # It's the right turn to perform an action
@@ -240,7 +241,7 @@ class Game(object):
                 return (None, GameData.ServerPlayerThunderStrike(self.__getCurrentPlayer().name, p.name, card, data.handCardOrdered, len(p.hand)))
             else:
                 logging.info(self.__getCurrentPlayer().name +
-                            ": card played and correctly put on the table")
+                             ": card played and correctly put on the table")
                 if card.value == 5:
                     logging.info(card.color + " pile has been filled.")
                     if self.__noteTokens > 0:
@@ -260,7 +261,8 @@ class Game(object):
         if data.destination == data.sender:
             return (GameData.ServerActionInvalid("You are giving a suggestion to yourself! Bad!"), None)
         if self.__noteTokens == self.__MAX_NOTE_TOKENS:
-            logging.warning("All the note tokens have been used. Impossible getting hints")
+            logging.warning(
+                "All the note tokens have been used. Impossible getting hints")
             return GameData.ServerActionInvalid("All the note tokens have been used"), None
         positions = []
         destPlayer: Player = None
@@ -290,9 +292,10 @@ class Game(object):
             return GameData.ServerInvalidDataReceived(data="You cannot give hints about cards that the other person does not have"), None
         self.__nextTurn()
         self.__noteTokens += 1
-        logging.info("Player " + data.sender + " providing hint to " + data.destination + ": cards with " + data.type + " " + str(data.value) + " are in positions: " + str(positions))
-        return None, GameData.ServerHintData(data.sender, data.destination, data.type, data.value, positions, self.__getCurrentPlayer().name) #! ADDED last param. see GameData relative comment
- 
+        logging.info("Player " + data.sender + " providing hint to " + data.destination +
+                     ": cards with " + data.type + " " + str(data.value) + " are in positions: " + str(positions))
+        # ! ADDED last param. see GameData relative comment
+        return None, GameData.ServerHintData(data.sender, data.destination, data.type, data.value, positions, self.__getCurrentPlayer().name)
 
     def isGameOver(self):
         return self.__gameOver
@@ -307,7 +310,7 @@ class Game(object):
             if p.name == name:
                 self.__players.remove(p)
                 break
-    
+
     def setPlayerReady(self, name: str):
         for p in self.__players:
             if p.name == name:
@@ -331,6 +334,8 @@ class Game(object):
         if len(self.__players) < 2:
             logging.warning("Not enough players!")
             return
+        for card in self.__cardsToDraw:
+            print(card.toString())
         logging.info("Ok, let's start the game!")
         if len(self.__players) < 4:
             for p in self.__players:
@@ -340,14 +345,16 @@ class Game(object):
             for _ in range(4):
                 for p in self.__players:
                     p.takeCard(self.__cardsToDraw)
+        print(len(self.__cardsToDraw))
         self.__started = True
 
     def __getPlayersStatus(self, currentPlayerName):
         players = []
         for p in self.__players:
             #! I WANT ALSO THE ABSOLUTE ORDER OF PLAYERS
-            if p.name == currentPlayerName: #! we don't want to cheat
-                tmp_player = Player(currentPlayerName) #! so we build an 'empty' Player object for the requesting player
+            if p.name == currentPlayerName:  # ! we don't want to cheat
+                # ! so we build an 'empty' Player object for the requesting player
+                tmp_player = Player(currentPlayerName)
                 players.append(tmp_player)
             else:
                 players.append(p)
@@ -362,7 +369,7 @@ class Game(object):
         return self.__players[self.__currentPlayer]
 
     def __discardCard(self, cardID: int, playerName: str) -> bool:
-        if self.__noteTokens < 1: # Ok only if you already used at least 1 token
+        if self.__noteTokens < 1:  # Ok only if you already used at least 1 token
             return False
         self.__noteTokens -= 1
         endLoop = False
@@ -376,11 +383,11 @@ class Game(object):
                     if endLoop:
                         break
                     if card.id == cardID:
-                        self.__discardPile.append(card) # discard
-                        p.hand.remove(card) # remove from hand
+                        self.__discardPile.append(card)  # discard
+                        p.hand.remove(card)  # remove from hand
                         endLoop = True
         return True
-    
+
     def __drawCard(self, playerName: str):
         if len(self.__cardsToDraw) == 0:
             return
@@ -391,19 +398,19 @@ class Game(object):
 
     def __playCard(self, playerName: str, cardPosition: int):
         p = self.__getPlayer(playerName)
-        self.__tableCards[p.hand[cardPosition].color].append(p.hand[cardPosition])
+        self.__tableCards[p.hand[cardPosition].color].append(
+            p.hand[cardPosition])
         p.hand.pop(cardPosition)
         if len(self.__cardsToDraw) > 0:
             p.hand.append(self.__cardsToDraw.pop())
-    
+
     def __checkTableCards(self) -> bool:
         for cardPool in self.__tableCards:
-            for card in self.__tableCards[cardPool]:
-                if len(self.__tableCards[cardPool]) > 0 and self.__tableCards[cardPool][len(self.__tableCards[cardPool]) - 1].value != len(self.__tableCards[cardPool]):
-                    self.__tableCards[cardPool].pop()
-                    self.__discardPile.append(card)
-                    self.__strikeThunder()
-                    return False
+            if len(self.__tableCards[cardPool]) > 0 and self.__tableCards[cardPool][len(self.__tableCards[cardPool]) - 1].value != len(self.__tableCards[cardPool]):
+                card = self.__tableCards[cardPool].pop()
+                self.__discardPile.append(card)
+                self.__strikeThunder()
+                return False
         return True
 
     # assumes cards checked
@@ -426,11 +433,12 @@ class Game(object):
         if ended:
             score = 0
             for pile in self.__tableCards:
-                score += len(self.__tableCards[pile]) #! BUGFIX # instead of 'len(pile)' --> 'pile' is the key (eg. 'red')
+                # ! BUGFIX # instead of 'len(pile)' --> 'pile' is the key (eg. 'red')
+                score += len(self.__tableCards[pile])
             print('Score: ' + str(score))
             return True, score
         return False, 0
-    
+
     def getPlayers(self):
         return self.__players
 
