@@ -70,7 +70,8 @@ class Game(object):
         "Meh!",
         "Good!",
         "Outstanding!",
-        "AMAZING!"
+        "AMAZING!",
+        "YOU'RE THE BEST!"
     ]
     __cards = []  # cards are the same for everyone
     __MAX_NOTE_TOKENS = 8
@@ -248,7 +249,6 @@ class Game(object):
                         self.__noteTokens -= 1
                         logging.info("Giving 1 free note token.")
                 self.__nextTurn()
-                self.__gameOver, self.__score = self.__checkGameEnded()
                 # ! ADDED last param. see GameData relative comment of GameData.ServerPlayerMoveOk
                 return (None, GameData.ServerPlayerMoveOk(self.__getCurrentPlayer().name, p.name, card, data.handCardOrdered, len(p.hand)))
         else:
@@ -334,8 +334,6 @@ class Game(object):
         if len(self.__players) < 2:
             logging.warning("Not enough players!")
             return
-        for card in self.__cardsToDraw:
-            print(card.toString())
         logging.info("Ok, let's start the game!")
         if len(self.__players) < 4:
             for p in self.__players:
@@ -345,7 +343,6 @@ class Game(object):
             for _ in range(4):
                 for p in self.__players:
                     p.takeCard(self.__cardsToDraw)
-        print(len(self.__cardsToDraw))
         self.__started = True
 
     def __getPlayersStatus(self, currentPlayerName):
@@ -425,8 +422,7 @@ class Game(object):
         for pile in self.__tableCards:
             ended = ended and self.__checkFinishedFirework(pile)
         if ended:
-            score = 25
-            return True, score
+            return True, 25
         if self.__stormTokens == self.__MAX_STORM_TOKENS:
             return True, 0
         ended = self.__lastTurn and self.__lastMoves == 0
@@ -435,7 +431,6 @@ class Game(object):
             for pile in self.__tableCards:
                 # ! BUGFIX # instead of 'len(pile)' --> 'pile' is the key (eg. 'red')
                 score += len(self.__tableCards[pile])
-            print('Score: ' + str(score))
             return True, score
         return False, 0
 
