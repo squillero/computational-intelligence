@@ -176,6 +176,7 @@ class ServerGameStateData(ServerToClientData):
     '''
     Shows the game state to the players.
     currentPlayer: the name of the player that should play right now.
+    handSize: the number of cards in the hand of the current player
     players: the list of players in turn order.
     usedNoteTokens: used blue (note) tokens. 0 is the minimum, 8 is the maximum.
     usedStormTokens: used red (storm) tokens. 0 is the minimum, 3 is the maximum. At 3 the game is over.
@@ -183,9 +184,10 @@ class ServerGameStateData(ServerToClientData):
     discardPile: shows the discard pile.
     NOTE: params might get added on request, if the game allows for it.
     '''
-    def __init__(self, currentPlayer: str, players: list, usedNoteTokens: int, usedStormTokens: int, table: list, discard: list) -> None:
+    def __init__(self, currentPlayer: str, handSize: int, players: list, usedNoteTokens: int, usedStormTokens: int, table: list, discard: list) -> None:
         action = "Show cards response"
         self.currentPlayer = currentPlayer
+        self.handSize = handSize
         self.players = players
         self.usedNoteTokens = usedNoteTokens
         self.usedStormTokens = usedStormTokens

@@ -116,6 +116,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             print("Player hands: ")
             for p in data.players:
                 print(p.toClientString())
+            print("Cards in your hand: " + str(data.handSize))
             print("Table cards: ")
             for pos in data.tableCards:
                 print(pos + ": [ ")

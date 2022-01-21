@@ -222,8 +222,8 @@ class Game(object):
     # Show request
     def __satisfyShowCardRequest(self, data: GameData.ClientGetGameStateRequest):
         logging.info("Showing hand to: " + data.sender)
-        currentPlayer, playerList = self.__getPlayersStatus(data.sender)
-        return (GameData.ServerGameStateData(currentPlayer, playerList, self.__noteTokens, self.__stormTokens, self.__tableCards, self.__discardPile), None)
+        currentPlayer, playerList, playerHandSize = self.__getPlayersStatus(data.sender)
+        return (GameData.ServerGameStateData(currentPlayer, playerHandSize, playerList, self.__noteTokens, self.__stormTokens, self.__tableCards, self.__discardPile), None)
 
     # Play card request
 
@@ -347,15 +347,17 @@ class Game(object):
 
     def __getPlayersStatus(self, currentPlayerName):
         players = []
+        handSize = 0
         for p in self.__players:
             #! I WANT ALSO THE ABSOLUTE ORDER OF PLAYERS
             if p.name == currentPlayerName:  # ! we don't want to cheat
                 # ! so we build an 'empty' Player object for the requesting player
                 tmp_player = Player(currentPlayerName)
                 players.append(tmp_player)
+                handSize = len(p.hand)
             else:
                 players.append(p)
-        return (self.__players[self.__currentPlayer].name, players)
+        return (self.__players[self.__currentPlayer].name, players, handSize)
 
     def __getPlayer(self, currentPlayerName: str) -> Player:
         for p in self.__players:
