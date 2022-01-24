@@ -5,6 +5,7 @@ from game import Game
 from game import Player
 import threading
 from constants import *
+from signal import signal, SIGPIPE, SIG_DFL
 import logging
 import sys
 
@@ -12,6 +13,8 @@ mutex = threading.Lock()
 # SERVER
 playerConnections = {}
 game = Game()
+
+mutex = threading.Lock()
 
 playersOk = []
 
@@ -35,7 +38,9 @@ def manageConnection(conn: socket, addr):
         while keepActive:
             print("SERVER WAITING")
             data = conn.recv(DATASIZE)
+
             mutex.acquire(True)
+
             if not data:
                 del playerConnections[playerName]
                 logging.warning("Player disconnected: " + playerName)
@@ -45,7 +50,8 @@ def manageConnection(conn: socket, addr):
                     os._exit(0)
                 keepActive = False
             else:
-                print(f"SERVER PROCESSING {GameData.GameData.deserialize(data)}")
+                print(
+                    f"SERVER PROCESSING {GameData.GameData.deserialize(data)}")
                 data = GameData.GameData.deserialize(data)
                 print(f"SERVER RECEIVED {type(data)} from {data.sender}")
                 if status == "Lobby":
@@ -54,7 +60,8 @@ def manageConnection(conn: socket, addr):
                         commandQueue[playerName] = []
                         if playerName in playerConnections.keys() or playerName == "" and playerName is None:
                             logging.warning("Duplicate player: " + playerName)
-                            conn.send(GameData.ServerActionInvalid("Player with that name already registered.").serialize())
+                            conn.send(GameData.ServerActionInvalid(
+                                "Player with that name already registered.").serialize())
                             mutex.release()
                             return
                         playerConnections[playerName] = (conn, addr)
@@ -65,7 +72,9 @@ def manageConnection(conn: socket, addr):
                     elif type(data) is GameData.ClientPlayerStartRequest:
                         game.setPlayerReady(playerName)
                         logging.info("Player ready: " + playerName)
-                        conn.send(GameData.ServerPlayerStartRequestAccepted(len(game.getPlayers()), game.getNumReadyPlayers()).serialize())
+                        conn.send(GameData.ServerPlayerStartRequestAccepted(
+                            len(game.getPlayers()), game.getNumReadyPlayers()).serialize())
+
                         if len(game.getPlayers()) == game.getNumReadyPlayers() and len(game.getPlayers()) >= numPlayers:
                             listNames = []
                             for player in game.getPlayers():
@@ -76,6 +85,7 @@ def manageConnection(conn: socket, addr):
                                 playerConnections[player][0].send(
                                     GameData.ServerStartGameData(listNames).serialize())
                             game.start()
+
                     # This ensures every player is ready to send requests
                     elif type(data) is GameData.ClientPlayerReadyData:
                         playersOk.append(1)
@@ -155,6 +165,7 @@ def start_server(nplayers):
 
 
 if __name__ == '__main__':
+    signal(SIGPIPE, SIG_DFL)
     print("Type 'exit' to end the program")
     if len(sys.argv) > 1:
         if int(sys.argv[1]) > 1:
