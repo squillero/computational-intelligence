@@ -5,7 +5,7 @@ from game import Game
 from game import Player
 import threading
 from constants import *
-from signal import signal, SIGPIPE, SIG_DFL
+#from signal import signal, SIGPIPE, SIG_DFL
 import logging
 import sys
 
@@ -165,7 +165,7 @@ def start_server(nplayers):
 
 
 if __name__ == '__main__':
-    signal(SIGPIPE, SIG_DFL)
+    #signal(SIGPIPE, SIG_DFL)
     print("Type 'exit' to end the program")
     if len(sys.argv) > 1:
         if int(sys.argv[1]) > 1:
