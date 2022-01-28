@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="hanabi-client-1" type="PythonConfigurationType" factoryName="Python" show_console_on_std_err="true" show_console_on_std_out="true">
+  <configuration default="false" name="hanabi-manual-client" type="PythonConfigurationType" factoryName="Python" show_console_on_std_err="true" show_console_on_std_out="true">
     <module name="computational-intelligence" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -39,7 +39,7 @@
     </EXTENSION>
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/project/hanabi/client.py" />
-    <option name="PARAMETERS" value="127.0.0.1 1024 client1" />
+    <option name="PARAMETERS" value="127.0.0.1 1024 manual-client" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

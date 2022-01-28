@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+from multiprocessing import Process
+
 from random import seed
 from random import randint, random
 
@@ -135,6 +137,16 @@ if __name__ == '__main__':
     _port = int(argv[2])
     _n_players = int(argv[3])
 
-    RandomClient(f'client{_n_players}', _ip, _port).start()
+    if _n_players > 5:
+        print("Max players = 5")
+        os._exit(0)
+
+    players = []
+    for i in range(0, _n_players):
+        p = Process(target=RandomClient(f'random-client-{i}', _ip, _port).start)
+        players.append(p)
+        players[i].start()
+
+    players[-1].join()
 
 
