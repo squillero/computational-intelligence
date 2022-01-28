@@ -1,29 +1,16 @@
 #!/usr/bin/env python3
 
-from sys import argv, stdout
-from threading import Thread
-import GameData
-import socket
-from constants import *
-import os
-
-import time
-import asyncio
-
-
 from random import seed
 from random import randint, random
 
 from client import *
 
-seed()  # DEBUG
+seed()
 
 class RandomClient(Client):
     def __init__(self, playerName, ip, port):
         Client.__init__(self, playerName, ip, port)
         self.sent_ready_command = False
-        self.all_players_ready = False
-        self.game_data_copy = {'player': None, 'usedStormTokens': 0, 'usedNoteTokens': 0}
 
     def get_random_command(self):
         if not self.sent_ready_command:
@@ -67,11 +54,10 @@ class RandomClient(Client):
 
     def start(self):
 
-        def manageInput():
+        def attempt_move():
             command = self.get_random_command()
 
             if self.sent_ready_command and not (self.game_data_copy['player'] == self.playerName):
-                #time.sleep(1)
                 return
 
             # Choose data to send
@@ -121,115 +107,34 @@ class RandomClient(Client):
             stdout.flush()
 
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            request = GameData.ClientPlayerAddData(self.playerName)
-            s.connect((self.ip, self.port))
-            s.send(request.serialize())
-            data = s.recv(DATASIZE)
-            data = GameData.GameData.deserialize(data)
-            if type(data) is GameData.ServerPlayerConnectionOk:
-                print("Connection accepted by the server. Welcome " + self.playerName)
-            print("[" + self.playerName + " - " + self.status + "]: ", end="")
+            # Begin connection
+            self.begin_socket_connection(s)
 
             while self.run:
-                # Stay idle if I already sent the "ready" command, but other players are not ready
+                # stay idle if I already sent the "ready" command, but other players are not ready
                 if self.sent_ready_command & (not self.all_players_ready):
-                    # time.sleep(2)
                     continue
 
-                manageInput()
+                # if everyone is ready, attempt move; return immediately if it's not my turn
+                attempt_move()
 
-                dataOk = False
                 data = s.recv(DATASIZE)
                 if not data:
                     continue
                 data = GameData.GameData.deserialize(data)
 
-                for attr in self.game_data_copy.keys():
-                    self.game_data_copy[attr] = getattr(data, attr, self.game_data_copy[attr])
+                # update own game data copy with any useful info
+                for field in vars(data).keys():
+                    self.game_data_copy[field] = getattr(data, field, None)
 
-                if type(data) is GameData.ServerPlayerStartRequestAccepted:
-                    dataOk = True
-                    print("Ready: " + str(data.acceptedStartRequests) + "/"  + str(data.connectedPlayers) + " players")
-                    data = s.recv(DATASIZE)
-                    data = GameData.GameData.deserialize(data)
-                if type(data) is GameData.ServerStartGameData:
-                    dataOk = True
-                    print("Game start!")
-                    s.send(GameData.ClientPlayerReadyData(self.playerName).serialize())
-                    self.status = CLIENT_STATUSES[1]
-                    self.all_players_ready = True
-                    self.game_data_copy['player'] = data.players[0]
+                self.process_incoming_data(data, s)
 
-                if type(data) is GameData.ServerGameStateData:
-                    dataOk = True
-                    print("Current player: " + data.currentPlayer)
-                    print("Player hands: ")
-                    for p in data.players:
-                        print(p.toClientString())
-                    print("Cards in your hand: " + str(data.handSize))
-                    print("Table cards: ")
-                    for pos in data.tableCards:
-                        print(pos + ": [ ")
-                        for c in data.tableCards[pos]:
-                            print(c.toClientString() + " ")
-                        print("]")
-                    print("Discard pile: ")
-                    for c in data.discardPile:
-                        print("\t" + c.toClientString())
-                    print("Note tokens used: " + str(data.usedNoteTokens) + "/8")
-                    print("Storm tokens used: " + str(data.usedStormTokens) + "/3")
-                if type(data) is GameData.ServerActionInvalid:
-                    dataOk = True
-                    print("Invalid action performed. Reason:")
-                    print(data.message)
-
-                    #if data.message == "It is not your turn yet":
-                    #    time.sleep(2) # TO-DO more elegant!
-
-                if type(data) is GameData.ServerActionValid:
-                    dataOk = True
-                    print("Action valid!")
-                    print("Current player: " + data.player)
-                if type(data) is GameData.ServerPlayerMoveOk:
-                    dataOk = True
-                    print("Nice move!")
-                    print("Current player: " + data.player)
-                if type(data) is GameData.ServerPlayerThunderStrike:
-                    dataOk = True
-                    print("OH NO! The Gods are unhappy with you!")
-                if type(data) is GameData.ServerHintData:
-                    dataOk = True
-
-                    print("Hint type: " + data.type)
-                    print("Player " + data.destination + " cards with value " + str(data.value) + " are:")
-                    for i in data.positions:
-                        print("\t" + str(i))
-                if type(data) is GameData.ServerInvalidDataReceived:
-                    dataOk = True
-                    print(data.data)
-                if type(data) is GameData.ServerGameOver:
-                    dataOk = True
-                    print(data.message)
-                    print(data.score)
-                    print(data.scoreMessage)
-                    stdout.flush()
-                    self.run = False
-                    print("Ready for a new game!")
-                if not dataOk:
-                    print("Unknown or unimplemented data type: " +  str(type(data)))
-                print("[" + self.playerName + " - " + self.status + "]: ", end="")
-                stdout.flush()
 
 if __name__ == '__main__':
     _ip = argv[1]
     _port = int(argv[2])
     _n_players = int(argv[3])
 
-    RandomClient(f'client_{_n_players}', _ip, _port).start()
-
-    #tasks = []
-    #for i in range(0, _n_players):
-    #    client = RandomClient(f'client_{i}', _ip, _port)
-    #    tasks.append(asyncio.ensure_future( client.start() ))
+    RandomClient(f'client{_n_players}', _ip, _port).start()
 
 
