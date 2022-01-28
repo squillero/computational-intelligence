@@ -7,9 +7,215 @@ import socket
 from constants import *
 import os
 
-from client import Client
+import time
 
+from random import seed
+from random import randint, random
+
+from client import *
+
+seed(1)  # DEBUG
 
 class RandomClient(Client):
     def __init__(self, playerName, ip, port):
         Client.__init__(self, playerName, ip, port)
+        self.started = False
+        self.canPlay = False
+
+    def get_random_command(self):
+        if not self.started:
+            self.started = True
+            return "ready"
+
+        # TO-DO : add logic to check if move is possible
+        move = CLIENT_MOVES[randint(0, 2)]
+
+        if move == "hint":
+            print("re-routed call to hint()")
+            #return self.build_hint_command()
+            return self.build_discard_command()
+        elif move == "play":
+            return self.build_play_command()
+        elif move == "discard":
+            return self.build_discard_command()
+
+    def build_hint_command(self, _type, _dest, _payload):
+        dest_hand = [] # TO-DO: query it from last game status, given the dest
+        if random() > 0.5:
+            _type = 'color'
+            _payload = CARD_COLORS[randint(0, 5)]
+        else:
+            _type = 'value'
+            _payload = dest_hand[randint(0, 5)]  # hint about a random value from destinatary's existing card numbers
+        return f"hint {_type} {_dest} {_payload}"
+
+    def build_discard_command(self, idx=0):
+        idx = randint(0, 5)
+        return f"discard {idx % 5}"  # force idx bounds-safety
+
+    def build_play_command(self, idx=0):
+        idx = randint(0, 5)
+        return f"play {idx % 5}"  # force idx bounds-safety
+
+    def start(self):
+
+        def manageInput():
+            while self.run:
+                command = self.get_random_command()
+
+                #if not self.canPlay:
+                #    time.sleep(1) # TO-DO fix!
+                #    return
+
+                # Choose data to send
+                if command == "exit":
+                    self.run = False
+                    os._exit(0)
+                elif command == "ready" and self.status == CLIENT_STATUSES[0]:
+                    s.send(GameData.ClientPlayerStartRequest(self.playerName).serialize())
+                elif command == "show" and self.status == CLIENT_STATUSES[1]:
+                    s.send(GameData.ClientGetGameStateRequest(self.playerName).serialize())
+                elif command.split(" ")[0] == "discard" and self.status == CLIENT_STATUSES[1]:
+                    try:
+                        cardStr = command.split(" ")
+                        cardOrder = int(cardStr[1])
+                        s.send(GameData.ClientPlayerDiscardCardRequest(self.playerName, cardOrder).serialize())
+                    except:
+                        print("Maybe you wanted to type 'discard <num>'?")
+                        continue
+                elif command.split(" ")[0] == "play" and self.status == CLIENT_STATUSES[1]:
+                    try:
+                        cardStr = command.split(" ")
+                        cardOrder = int(cardStr[1])
+                        s.send(GameData.ClientPlayerPlayCardRequest(self.playerName, cardOrder).serialize())
+                    except:
+                        print("Maybe you wanted to type 'play <num>'?")
+                        continue
+                elif command.split(" ")[0] == "hint" and self.status == CLIENT_STATUSES[1]:
+                    try:
+                        destination = command.split(" ")[2]
+                        t = command.split(" ")[1].lower()
+                        if t != "colour" and t != "color" and t != "value":
+                            print("Error: type can be 'color' or 'value'")
+                            continue
+                        value = command.split(" ")[3].lower()
+                        if t == "value":
+                            value = int(value)
+                            if int(value) > 5 or int(value) < 1:
+                                print("Error: card values can range from 1 to 5")
+                                continue
+                        else:
+                            if value not in ["green", "red", "blue", "yellow", "white"]:
+                                print("Error: card color can only be green, red, blue, yellow or white")
+                                continue
+                        s.send(GameData.ClientHintData(self.playerName, destination, t, value).serialize())
+                    except:
+                        print("Maybe you wanted to type 'hint <type> <destinatary> <value>'?")
+                        continue
+                elif command == "":
+                    print("[" + self.playerName + " - " + self.status + "]: ", end="")
+                else:
+                    print("Unknown command: " + command)
+                    continue
+
+
+                stdout.flush()
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            request = GameData.ClientPlayerAddData(self.playerName)
+            s.connect((self.ip, self.port))
+            s.send(request.serialize())
+            data = s.recv(DATASIZE)
+            data = GameData.GameData.deserialize(data)
+            if type(data) is GameData.ServerPlayerConnectionOk:
+                print("Connection accepted by the server. Welcome " + self.playerName)
+            print("[" + self.playerName + " - " + self.status + "]: ", end="")
+            Thread(target=manageInput).start()
+            while self.run:
+                dataOk = False
+                data = s.recv(DATASIZE)
+                if not data:
+                    continue
+                data = GameData.GameData.deserialize(data)
+                if type(data) is GameData.ServerPlayerStartRequestAccepted:
+                    dataOk = True
+                    print("Ready: " + str(data.acceptedStartRequests) + "/"  + str(data.connectedPlayers) + " players")
+                    data = s.recv(DATASIZE)
+                    data = GameData.GameData.deserialize(data)
+
+                if type(data) is GameData.ServerStartGameData:
+                    dataOk = True
+                    print("Game start!")
+                    s.send(GameData.ClientPlayerReadyData(self.playerName).serialize())
+                    self.status = CLIENT_STATUSES[1]
+                    self.canPlay = True
+                if type(data) is GameData.ServerGameStateData:
+                    dataOk = True
+                    print("Current player: " + data.currentPlayer)
+                    print("Player hands: ")
+                    for p in data.players:
+                        print(p.toClientString())
+                    print("Cards in your hand: " + str(data.handSize))
+                    print("Table cards: ")
+                    for pos in data.tableCards:
+                        print(pos + ": [ ")
+                        for c in data.tableCards[pos]:
+                            print(c.toClientString() + " ")
+                        print("]")
+                    print("Discard pile: ")
+                    for c in data.discardPile:
+                        print("\t" + c.toClientString())
+                    print("Note tokens used: " + str(data.usedNoteTokens) + "/8")
+                    print("Storm tokens used: " + str(data.usedStormTokens) + "/3")
+                if type(data) is GameData.ServerActionInvalid:
+                    dataOk = True
+                    print("Invalid action performed. Reason:")
+                    print(data.message)
+                if type(data) is GameData.ServerActionValid:
+                    dataOk = True
+                    print("Action valid!")
+                    print("Current player: " + data.player)
+                if type(data) is GameData.ServerPlayerMoveOk:
+                    dataOk = True
+                    print("Nice move!")
+                    print("Current player: " + data.player)
+                if type(data) is GameData.ServerPlayerThunderStrike:
+                    dataOk = True
+                    print("OH NO! The Gods are unhappy with you!")
+                if type(data) is GameData.ServerHintData:
+                    dataOk = True
+                    print("Hint type: " + data.type)
+                    print("Player " + data.destination + " cards with value " + str(data.value) + " are:")
+                    for i in data.positions:
+                        print("\t" + str(i))
+                if type(data) is GameData.ServerInvalidDataReceived:
+                    dataOk = True
+                    print(data.data)
+                if type(data) is GameData.ServerGameOver:
+                    dataOk = True
+                    print(data.message)
+                    print(data.score)
+                    print(data.scoreMessage)
+                    stdout.flush()
+                    #self.run = False
+                    print("Ready for a new game!")
+                if not dataOk:
+                    print("Unknown or unimplemented data type: " +  str(type(data)))
+                print("[" + self.playerName + " - " + self.status + "]: ", end="")
+                stdout.flush()
+
+
+if __name__ == '__main__':
+    if len(argv) < 4:
+        print("You need the player name to start the game.")
+        #exit(-1)
+        _playerName = "Test" # For debug
+        _ip = HOST
+        _port = PORT
+    else:
+        _playerName = argv[3]
+        _ip = argv[1]
+        _port = int(argv[2])
+
+    client = RandomClient(_playerName, _ip, _port)
+    client.start()

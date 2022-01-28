@@ -7,6 +7,12 @@ import socket
 from constants import *
 import os
 
+CLIENT_STATUSES = ["Lobby", "Game", "GameHint"]
+
+CLIENT_MOVES = ["hint", "play", "discard"]
+
+CARD_COLORS = ["green", "red", "blue", "yellow", "white"]
+
 class Client:
     def __init__(self, playerName, ip, port):
         self.playerName = playerName
@@ -14,13 +20,30 @@ class Client:
         self.port = port
         self.hintState = ("", "")
         self.run = True
-        self.statuses = ["Lobby", "Game", "GameHint"]
-        self.status = self.statuses[0]
+        self.status = CLIENT_STATUSES[0]
+        self.move_history = []
         pass
 
     def start(self):
         print("Client::start - base class stub")
         pass
+
+    def record_move(self, move, outcome):
+        # TO-DO: always call this fn on every move
+        # TO-DO:  decide representation for outcome; calculate before calling this fn
+        self.move_history.append((move, outcome))
+
+    def build_hint_command(self, _type, _dest, _payload):
+        # in the form of:
+        # hint color <dest> <color in CARD_COLORS>,  or:
+        # hint value <dest> <value in 1-5>
+        return f"hint {_type} {_dest} {_payload}"
+
+    def build_discard_command(self, idx):
+        return f"discard {idx % 5}"  # force idx bounds-safety
+
+    def build_play_command(self, idx):
+        return f"play {idx % 5}"  # force idx bounds-safety
 
 class ManualClient(Client):
     def __init__(self, playerName, ip, port):
@@ -28,19 +51,17 @@ class ManualClient(Client):
 
     def start(self):
         def manageInput():
-            #global run
-            #global status
             while self.run:
                 command = input()
                 # Choose data to send
                 if command == "exit":
-                    run = False
+                    self.run = False
                     os._exit(0)
-                elif command == "ready" and self.status == self.statuses[0]:
+                elif command == "ready" and self.status == CLIENT_STATUSES[0]:
                     s.send(GameData.ClientPlayerStartRequest(self.playerName).serialize())
-                elif command == "show" and self.status == self.statuses[1]:
+                elif command == "show" and self.status == CLIENT_STATUSES[1]:
                     s.send(GameData.ClientGetGameStateRequest(self.playerName).serialize())
-                elif command.split(" ")[0] == "discard" and self.status == self.statuses[1]:
+                elif command.split(" ")[0] == "discard" and self.status == CLIENT_STATUSES[1]:
                     try:
                         cardStr = command.split(" ")
                         cardOrder = int(cardStr[1])
@@ -48,7 +69,7 @@ class ManualClient(Client):
                     except:
                         print("Maybe you wanted to type 'discard <num>'?")
                         continue
-                elif command.split(" ")[0] == "play" and self.status == self.statuses[1]:
+                elif command.split(" ")[0] == "play" and self.status == CLIENT_STATUSES[1]:
                     try:
                         cardStr = command.split(" ")
                         cardOrder = int(cardStr[1])
@@ -56,7 +77,7 @@ class ManualClient(Client):
                     except:
                         print("Maybe you wanted to type 'play <num>'?")
                         continue
-                elif command.split(" ")[0] == "hint" and self.status == self.statuses[1]:
+                elif command.split(" ")[0] == "hint" and self.status == CLIENT_STATUSES[1]:
                     try:
                         destination = command.split(" ")[2]
                         t = command.split(" ")[1].lower()
@@ -109,7 +130,7 @@ class ManualClient(Client):
                     dataOk = True
                     print("Game start!")
                     s.send(GameData.ClientPlayerReadyData(self.playerName).serialize())
-                    self.status = self.statuses[1]
+                    self.status = CLIENT_STATUSES[1]
                 if type(data) is GameData.ServerGameStateData:
                     dataOk = True
                     print("Current player: " + data.currentPlayer)
