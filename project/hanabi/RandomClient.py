@@ -16,7 +16,7 @@ from random import randint, random
 
 from client import *
 
-seed(time.time_ns())  # DEBUG
+seed()  # DEBUG
 
 class RandomClient(Client):
     def __init__(self, playerName, ip, port):
@@ -33,7 +33,7 @@ class RandomClient(Client):
         move_ok = False
         move = ""
         while not move_ok:
-            move = CLIENT_MOVES[randint(0, 2)]
+            move = CLIENT_MOVES[randint(1, 2)]
             if (move == 'discard') and (self.game_data_copy['usedNoteTokens'] == 0):
                 continue
             if (move == 'hint') and (self.game_data_copy['usedNoteTokens'] == 8):
@@ -41,9 +41,7 @@ class RandomClient(Client):
             move_ok = True
 
         if move == "hint":
-            print("re-routed call to hint()")
-            #return self.build_hint_command()
-            return self.build_play_command()
+            return self.build_hint_command()
         elif move == "play":
             return self.build_play_command()
         elif move == "discard":
@@ -53,24 +51,28 @@ class RandomClient(Client):
         dest_hand = [] # TO-DO: query it from last game status, given the dest
         if random() > 0.5:
             _type = 'color'
-            _payload = CARD_COLORS[randint(0, 5)]
+            _payload = CARD_COLORS[randint(0, 4)]
         else:
             _type = 'value'
-            _payload = dest_hand[randint(0, 5)]  # hint about a random value from destinatary's existing card numbers
+            _payload = dest_hand[randint(0, 4)]  # hint about a random value from destinatary's existing card numbers
         return f"hint {_type} {_dest} {_payload}"
 
     def build_discard_command(self, idx=0):
-        idx = randint(0, 5)
+        idx = randint(0, 4)
         return f"discard {idx % 5}"  # force idx bounds-safety
 
     def build_play_command(self, idx=0):
-        idx = randint(0, 5)
+        idx = randint(0, 4)
         return f"play {idx % 5}"  # force idx bounds-safety
 
     def start(self):
 
         def manageInput():
             command = self.get_random_command()
+
+            if self.sent_ready_command and not (self.game_data_copy['player'] == self.playerName):
+                #time.sleep(1)
+                return
 
             # Choose data to send
             if command == "exit":
@@ -134,10 +136,6 @@ class RandomClient(Client):
                     # time.sleep(2)
                     continue
 
-                #if self.sent_ready_command and not (self.current_player == self.playerName):
-                #    # time.sleep(2)
-                #    continue
-
                 manageInput()
 
                 dataOk = False
@@ -148,12 +146,6 @@ class RandomClient(Client):
 
                 for attr in self.game_data_copy.keys():
                     self.game_data_copy[attr] = getattr(data, attr, self.game_data_copy[attr])
-
-                    #try:
-                    #    self.game_data_copy[attr] = getattr(data, attr, self.game_data_copy[attr])
-                    #except AttributeError:
-                    #    continue
-
 
                 if type(data) is GameData.ServerPlayerStartRequestAccepted:
                     dataOk = True
@@ -191,8 +183,8 @@ class RandomClient(Client):
                     print("Invalid action performed. Reason:")
                     print(data.message)
 
-                    if data.message == "It is not your turn yet":
-                        time.sleep(2) # TO-DO more elegant!
+                    #if data.message == "It is not your turn yet":
+                    #    time.sleep(2) # TO-DO more elegant!
 
                 if type(data) is GameData.ServerActionValid:
                     dataOk = True
