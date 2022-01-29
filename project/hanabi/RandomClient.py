@@ -94,7 +94,7 @@ class RandomClient(Client):
         elif move == "discard":
             return RandomClient.build_discard_command()
 
-    def start(self):
+    def start(self, _lock):
 
         def attempt_move(command):
             # return immediately if it's now my turn
@@ -161,6 +161,7 @@ class RandomClient(Client):
             self.sent_ready_command = True
 
             while self.run:
+                # Always update own game_data_copy with 'show' before other commands
                 attempt_move("show")
                 listen()
 
@@ -168,11 +169,17 @@ class RandomClient(Client):
                 if self.sent_ready_command & (not self.all_players_ready):
                     continue
 
-                # Always update own game_data_copy with 'show' before other commands
-                # RandomClient's action is at random (with logic checks)
                 if self.is_player_turn():
-                    attempt_move(self.get_random_command())
-                    listen()
+                    _lock.acquire()
+                    try:
+                        attempt_move("show")
+                        listen()
+
+                        # RandomClient's action is at random (with logic checks)
+                        attempt_move(self.get_random_command())
+                        listen()
+                    finally:
+                        _lock.release()
 
 
 if __name__ == '__main__':
@@ -186,9 +193,12 @@ if __name__ == '__main__':
         print("Max players = 5")
         os._exit(0)
     else:
+
+        lock = Lock()
+
         players = []
         for i in range(0, _n_players):
-            p = Process(target=RandomClient(f'random-client-{i}', _ip, _port).start)
+            p = Process(target=RandomClient(f'random-client-{i}', _ip, _port).start, args=(lock,))
             players.append(p)
             players[i].start()
 

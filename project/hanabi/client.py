@@ -26,10 +26,6 @@ class Client:
         self.game_data_copy = {'player': None, 'usedStormTokens': 0, 'usedNoteTokens': 0}
         pass
 
-    def start(self):
-        print("Client::start - base class stub")
-        pass
-
     def is_player_turn(self):
         return self.game_data_copy['player'] == self.playerName
 
