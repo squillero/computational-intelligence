@@ -46,6 +46,7 @@ class Client:
         data = GameData.GameData.deserialize(data)
         if type(data) is GameData.ServerPlayerConnectionOk:
             print("Connection accepted by the server. Welcome " + self.playerName)
+            s.send(GameData.ClientPlayerStartRequest(self.playerName).serialize())
         print("[" + self.playerName + " - " + self.status + "]: ", end="")
 
     def process_incoming_data(self, data, s):

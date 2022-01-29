@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-from multiprocessing import Process
+from multiprocessing import Process, Lock
 
 from random import seed
 from random import randint, random, choice
 
 from client import *
 
-seed(15) # fixed for debug
+seed(32) # fixed for debug
 
 
 class RandomClient(Client):
@@ -105,9 +105,6 @@ class RandomClient(Client):
             if command == "exit":
                 self.run = False
                 os._exit(0)
-            elif command == "ready" and self.status == CLIENT_STATUSES[0]:
-                self.sent_ready_command = True
-                s.send(GameData.ClientPlayerStartRequest(self.playerName).serialize())
             elif command == "show" and self.status == CLIENT_STATUSES[1]:
                 s.send(GameData.ClientGetGameStateRequest(self.playerName).serialize())
             elif command.split(" ")[0] == "discard" and self.status == CLIENT_STATUSES[1]:
@@ -147,40 +144,35 @@ class RandomClient(Client):
                 print("Unknown command: " + command)
             stdout.flush()
 
+        def listen():
+            data = s.recv(DATASIZE)
+            if not data:
+                return None
+            data = GameData.GameData.deserialize(data)
+            # update own game data copy with any useful info
+            for field in vars(data).keys():
+                self.game_data_copy[field] = getattr(data, field, None)
+            self.process_incoming_data(data, s)
+            return data
+
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             # Begin connection
             self.begin_socket_connection(s)
+            self.sent_ready_command = True
 
             while self.run:
+                attempt_move("show")
+                listen()
+
                 # stay idle if I already sent the "ready" command, but other players are not ready
                 if self.sent_ready_command & (not self.all_players_ready):
                     continue
 
                 # Always update own game_data_copy with 'show' before other commands
                 # RandomClient's action is at random (with logic checks)
-                if not self.sent_ready_command:
-                    commands_with_proxy = ["ready", "show"]
-                else:
-                    commands_with_proxy = ["show", self.get_random_command()]
-
-                for _command in commands_with_proxy:
-                    # stay idle if it's not my turn; except if it's a 'show' command
-                    if (_command != 'show') & self.sent_ready_command and not self.is_player_turn():
-                        continue
-
-                    attempt_move(_command)
-
-                    data = s.recv(DATASIZE)
-                    if not data:
-                        continue
-                    data = GameData.GameData.deserialize(data)
-
-                    # update own game data copy with any useful info
-                    for field in vars(data).keys():
-                        self.game_data_copy[field] = getattr(data, field, None)
-
-                    self.process_incoming_data(data, s)
-
+                if self.is_player_turn():
+                    attempt_move(self.get_random_command())
+                    listen()
 
 
 if __name__ == '__main__':
