@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import pprint
 from sys import argv, stdout
 from threading import Thread
 import GameData
@@ -30,22 +30,13 @@ class Client:
         print("Client::start - base class stub")
         pass
 
+    def is_player_turn(self):
+        return self.game_data_copy['player'] == self.playerName
+
     def record_move(self, move, outcome):
         # TO-DO: always call this fn on every move
         # TO-DO:  decide representation for outcome; calculate before calling this fn
         self.move_history.append((move, outcome))
-
-    def build_hint_command(self, _type, _dest, _payload):
-        # in the form of:
-        # hint color <dest> <color in CARD_COLORS>,  or:
-        # hint value <dest> <value in 1-5>
-        return f"hint {_type} {_dest} {_payload}"
-
-    def build_discard_command(self, idx):
-        return f"discard {idx % 5}"  # force idx bounds-safety
-
-    def build_play_command(self, idx):
-        return f"play {idx % 5}"  # force idx bounds-safety
 
     def begin_socket_connection(self, s):
         request = GameData.ClientPlayerAddData(self.playerName)
@@ -72,6 +63,7 @@ class Client:
             self.status = CLIENT_STATUSES[1]
             self.all_players_ready = True
             self.game_data_copy['player'] = data.players[0]
+            self.game_data_copy['player_names'] = data.players
         if type(data) is GameData.ServerGameStateData:
             dataOk = True
             print("Current player: " + data.currentPlayer)
@@ -104,6 +96,7 @@ class Client:
             print("Current player: " + data.player)
         if type(data) is GameData.ServerPlayerThunderStrike:
             dataOk = True
+            self.game_data_copy['usedStormTokens'] += 1
             print("OH NO! The Gods are unhappy with you!")
         if type(data) is GameData.ServerHintData:
             dataOk = True
@@ -121,7 +114,7 @@ class Client:
             print(data.scoreMessage)
             stdout.flush()
             self.run = False
-            print("Ready for a new game!")
+            print("Stopping client.")
         if not dataOk:
             print("Unknown or unimplemented data type: " + str(type(data)))
         print("[" + self.playerName + " - " + self.status + "]: ", end="")
@@ -203,10 +196,10 @@ class ManualClient(Client):
 
                 self.process_incoming_data(data, s)
 
+
 if __name__ == '__main__':
     if len(argv) < 4:
         print("You need the player name to start the game.")
-        #exit(-1)
         _playerName = "Test" # For debug
         _ip = HOST
         _port = PORT
