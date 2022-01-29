@@ -2,6 +2,8 @@
 
 Exam of computational intelligence 2021 - 2022. It requires teaching the client to play the game of Hanabi (rules can be found [here](https://www.spillehulen.dk/media/102616/hanabi-card-game-rules.pdf)).
 
+<img src="./license.PNG" width="50%">
+
 ## Server
 
 The server accepts passing objects provided in GameData.py back and forth to the clients.
@@ -49,5 +51,3 @@ Commands for client:
   + type: 'color' or 'value'
   + destinatary: name of the person you want to ask the hint to
 + discard \<num>: discard the card *num* (\[0-4]) from your hand
-
-<img src="./license.PNG" width="70%">
