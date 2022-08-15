@@ -1,0 +1,35 @@
+# Copyright © 2022 Giovanni Squillero <squillero@polito.it>
+# https://github.com/squillero/computational-intelligence
+# Free for personal or classroom use; see 'LICENSE.md' for details.
+
+[tool.black]
+exclude = "(^\\.|^__pycache__)"
+include = "(\\.py$|\\.ipynb$)"
+#include = "\\.ipynb"
+line-length = 120
+
+[tool.poetry]
+authors = ["Giovanni Squillero <squillero@polito.it>"]
+description = "Code and Notebook dependencies for Computational Intelligence (2022-23)"
+license = "proprietary"
+name = "ci22"
+version = "0.1.0"
+
+[tool.poetry.dependencies]
+black = {extras = ["jupyter"], version = "^22.6.0"}
+jupyter = "^1.0.0"
+nero = {extras = ["jupyter"], version = "^1.0.20220202"}
+numpy = ">=1.23"
+pandas = "^1.4.3"
+python = ">=3.10"
+toml = "^0.10.2"
+tqdm = "^4.64.0"
+matplotlib = "^3.5.3"
+networkx = "^2.8.5"
+pydot = "^1.4.2"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0"]
