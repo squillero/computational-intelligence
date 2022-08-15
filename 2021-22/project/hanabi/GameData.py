@@ -1,17 +1,32 @@
 # Data to be passed from client to server
 import pickle
 
+from constants import DATASIZE
+
 # Generic object
 class GameData(object):
     def __init__(self, sender) -> None:
         super().__init__()
         self.sender = sender
 
-    def serialize(self) -> str:
-        return pickle.dumps(self)
+    def serialize(self) -> bytes:
+        data = pickle.dumps(self)
+        datalen = len(data)
+        binaryDataLen: bytes  = datalen.to_bytes(2, 'little')
+        totdata = bytearray(binaryDataLen) + data
+        #ensure no multiple data on same request
+        for _ in range(datalen + len(binaryDataLen), DATASIZE):
+            totdata.append(0)
+        data = bytes(totdata)
+        assert(len(data) == DATASIZE)
+        return data
 
-    def deserialize(serialized: str):
-        return pickle.loads(serialized)
+    def deserialize(serialized: bytes):
+        binarySize = serialized[0:2]
+        assert(len(binarySize) == 2)
+        datasize = int.from_bytes(binarySize, 'little')
+        data = serialized[2:datasize + 2]
+        return pickle.loads(data)
 
 
 # Client to server
@@ -99,6 +114,7 @@ class ServerToClientData(GameData):
         super().__init__("Game Server")
         self.action = action # debug purposes
 
+
 class ServerHintData(ServerToClientData):
     '''
     The hint data that the server passes to the destination client. It needs:
@@ -108,14 +124,20 @@ class ServerHintData(ServerToClientData):
     value: can be the color or the value of the card
     positions: a list of cards that satisfy the value of the hint
     '''
-    def __init__(self, sender: str, destination: str, type: str, value, positions: list) -> None:
+
+    # ! ADDED 'player: str' so you know the current player (to be consistent with play and discard methods!)
+    def __init__(self, sender: str, destination: str, type: str, value, positions: list, player: str) -> None:
         action = "Hint data from server to destination client"
-        self.sender = sender
+        # ! BUGFIX super.sender overwrites self.sender with 'Game Server', use a different name like 'self.source'
+        self.source = sender
         self.destination = destination
         self.type = type
         self.value = value
         self.positions = positions
+        # ! ADDED so you know the current player (to be consistent with play and discard methods)
+        self.player = player
         super().__init__(action)
+
 
 class ServerPlayerConnectionOk(ServerToClientData):
     '''
@@ -154,6 +176,7 @@ class ServerGameStateData(ServerToClientData):
     '''
     Shows the game state to the players.
     currentPlayer: the name of the player that should play right now.
+    handSize: the number of cards in the hand of the current player
     players: the list of players in turn order.
     usedNoteTokens: used blue (note) tokens. 0 is the minimum, 8 is the maximum.
     usedStormTokens: used red (storm) tokens. 0 is the minimum, 3 is the maximum. At 3 the game is over.
@@ -161,9 +184,10 @@ class ServerGameStateData(ServerToClientData):
     discardPile: shows the discard pile.
     NOTE: params might get added on request, if the game allows for it.
     '''
-    def __init__(self, currentPlayer: str, players: list, usedNoteTokens: int, usedStormTokens: int, table: list, discard: list) -> None:
+    def __init__(self, currentPlayer: str, handSize: int, players: list, usedNoteTokens: int, usedStormTokens: int, table: list, discard: list) -> None:
         action = "Show cards response"
         self.currentPlayer = currentPlayer
+        self.handSize = handSize
         self.players = players
         self.usedNoteTokens = usedNoteTokens
         self.usedStormTokens = usedStormTokens
@@ -171,32 +195,67 @@ class ServerGameStateData(ServerToClientData):
         self.discardPile = discard
         super().__init__(action)
 
+
 class ServerActionValid(ServerToClientData):
     '''
-    Action well performed
+    Action well performed.
+    player: the current player.
+    lastPlayer: the player that made the last move.
+    action: the actino occurred. Now it is only "discard".
+    move: the last move that occurred.
+    cardHandIndex: the card index of the lastPlayer played card, given his hand order.
     '''
-    def __init__(self, player: str) -> None:
-        action = "Valid action performed"
+    # ! ADDED send also length of hand of lastPlayer so to know if drawing occured
+    def __init__(self, player: str, lastPlayer: str, action: str, card, cardHandIndex: int, handLength=0) -> None:
+        # action = "Valid action performed" #! BUGFIX You are overwriting the action e.g. "discard", so we lose what happened
+        self.action = action
+        self.card = card
+        self.lastPlayer = lastPlayer
+        self.cardHandIndex = cardHandIndex
         self.player = player
+        # ! ADDED send also length of hand of lastPlayer so to know if drawing occured i.e. you know if there are cards left in the deck
+        self.handLength = handLength
         super().__init__(action)
+
 
 class ServerPlayerMoveOk(ServerToClientData):
     '''
-    Play move well performed and successful in game terms.
+    Play move well performed and successful in game terms. It means a card has been placed successfully.
     player: the current player.
+    lastPlayer: the player that made the last move.
+    card: the last card played.
+    cardHandIndex: the card index of the lastPlayer played card, given his hand order.
     '''
-    def __init__(self, player: str) -> None:
+    # ! ADDED send also length of hand of lastPlayer so to know if drawing occured
+    def __init__(self, player: str, lastPlayer: str, card, cardHandIndex: int, handLength: int) -> None:
         action = "Correct move! Well done!"
+        self.card = card
+        self.cardHandIndex = cardHandIndex
+        self.lastPlayer = lastPlayer
         self.player = player
+        # ! ADDED send also length of hand of lastPlayer so to know if drawing occured
+        self.handLength = handLength
         super().__init__(action)
+
 
 class ServerPlayerThunderStrike(ServerToClientData):
     '''
     Play move well performed, unsuccessful in game terms.
     Adds a red note on the server.
+    player: the current player.
+    lastPlayer: the player that made the last move.
+    card: the card that was just discarded.
+    cardHandIndex: the card index of the lastPlayer played card, given his hand order.
     '''
-    def __init__(self) -> None:
+    # ! ADDED send also length of hand of lastPlayer so to know if drawing occured
+    def __init__(self, player: str, lastPlayer: str, card, cardHandIndex: int, handLength: int) -> None:
         action = "The Gods are angry at you!"
+        self.player = player
+        self.lastPlayer = lastPlayer
+        self.cardHandIndex = cardHandIndex
+        self.card = card
+        # ! ADDED send also length of hand of lastPlayer so to know if drawing occured
+        self.handLength = handLength
         super().__init__(action)
 
 class ServerActionInvalid(ServerToClientData):
