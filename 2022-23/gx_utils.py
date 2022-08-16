@@ -20,7 +20,7 @@ class PriorityQueue:
         return item in self._data_set
 
     def push(self, item, p=None):
-        assert p not in self, f"Duplicated element: {item}"
+        assert item not in self, f"Duplicated element"
         if p is None:
             p = len(self._data_set)
         self._data_set.add(item)
@@ -106,7 +106,7 @@ class Multiset:
             self._data[item] += cnt
 
     def remove(self, item, *, cnt=1):
-        assert item in self, f"Item not in collection: {item}"
+        assert item in self, f"Item not in collection"
         self._data[item] -= cnt
         if self._data[item] <= 0:
             del self._data[item]
