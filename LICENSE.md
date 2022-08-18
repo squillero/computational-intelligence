@@ -1,4 +1,9 @@
-#### Copyright © 2021-2022 by Giovanni Squillero.
+## Computational Intelligence
+
+<https://github.com/squillero/computational-intelligence>
+
+#### Copyright © 2021-2022 by Giovanni Squillero
+
 Permission to make digital or hard copies for personal or classroom use of
 these files is granted without fee provided that copies are not distributed
 for profit, and that copies preserve both the copyright notice and the full
