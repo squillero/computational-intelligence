@@ -50,12 +50,18 @@ class Quarto(object):
         self.__selected_piece_index = -1
     
     def select(self, pieceIndex: int) -> bool:
+        '''
+        select a piece. Returns True on success
+        '''
         if pieceIndex not in self.__board:
             self.__selected_piece_index = pieceIndex
             return True
         return False
 
     def place(self, x: int, y: int) -> bool:
+        '''
+        Place piece in coordinates (x, y). Returns true on success
+        '''
         if self.__placeable(x, y):
             self.__board[y, x] = self.__selected_piece_index
             return True
@@ -70,6 +76,9 @@ class Quarto(object):
         return True
     
     def print(self):
+        '''
+        Print the board
+        '''
         for row in self.__board:
             print("\n -------------------")
             print("|", end="")
@@ -79,12 +88,21 @@ class Quarto(object):
         print(f"Selected piece: {self.__selected_piece_index}\n")
 
     def get_piece_charachteristics(self, index: int) -> Piece:
+        '''
+        Gets charachteristics of a piece (index-based)
+        '''
         return copy.deepcopy(self.__pieces[index])
 
     def get_board_status(self) -> np.ndarray:
+        '''
+        Get the current board status (pieces are represented by index)
+        '''
         return copy.deepcopy(self.__board)
     
     def get_selected_piece(self) -> int:
+        '''
+        Get index of selected piece
+        '''
         return copy.deepcopy(self.__selected_piece_index)
 
     def __check_horizontal(self) -> int:
@@ -177,6 +195,9 @@ class Quarto(object):
         return -1
 
     def check_winner(self) -> int:
+        '''
+        Check who is the winner
+        '''
         l = [self.__check_horizontal(), self.__check_vertical(), self.__check_diagonal()]
         for elem in l:
             if elem >= 0:
@@ -184,6 +205,9 @@ class Quarto(object):
         return -1
 
     def check_finished(self) -> bool:
+        '''
+        Check who is the loser
+        '''
         for row in self.__board:
             for elem in row:
                 if elem == -1:
@@ -191,6 +215,9 @@ class Quarto(object):
         return True
 
     def run(self) -> int:
+        '''
+        Run the game (with output for every move)
+        '''
         winner = -1
         while winner < 0 and not self.check_finished():
             self.print()
