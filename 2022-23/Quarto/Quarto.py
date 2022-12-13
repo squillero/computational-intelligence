@@ -68,7 +68,7 @@ class Quarto(object):
         return False
 
     def __placeable(self, x: int, y: int) -> bool:
-        return not (y < 0 or x < 0 or x > 3 or y > 3 or self.__board[y, x] < 0)
+        return not (y < 0 or x < 0 or x > 3 or y > 3 or self.__board[y, x] >= 0)
     
     def print(self):
         '''
