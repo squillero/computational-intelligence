@@ -26,7 +26,7 @@ class Quarto(object):
     MAX_PLAYERS = 2
     BOARD_SIDE = 4
 
-    def __init__(self, players: tuple[Player, Player]) -> None:
+    def __init__(self) -> None:
         self.__board = np.ones(shape=(self.BOARD_SIDE, self.BOARD_SIDE), dtype=int) * -1
         self.__pieces = []
         self.__pieces.append(Piece(False, False, False, False)) # 0
@@ -46,8 +46,11 @@ class Quarto(object):
         self.__pieces.append(Piece(True, True, True, False))    # 14
         self.__pieces.append(Piece(True, True, True, True))     # 15
         self.__current_player = 0
-        self.__players = players
+        self.__players = ()
         self.__selected_piece_index = -1
+    
+    def set_players(self, players: tuple[Player, Player]):
+        self.__players = players
     
     def select(self, pieceIndex: int) -> bool:
         '''
@@ -185,7 +188,7 @@ class Quarto(object):
                 square_values.append(self.__board[-i, -i])
             else:
                 circle_values.append(self.__board[-i, -i])
-            if len(high_values) == self.BOARD_SIDE or len(coloured_values) == self.BOARD_SIDE or len(solid_values) == self.BOARD_SIDE or len(square_values) == self.BOARD_SIDE or len(low_values) == self.BOARD_SIDE or len(noncolor_values) == self.BOARD_SIDE or len(hollow_values) == self.BOARD_SIDE or len(circle_values) == self.BOARD_SIDE:
+        if len(high_values) == self.BOARD_SIDE or len(coloured_values) == self.BOARD_SIDE or len(solid_values) == self.BOARD_SIDE or len(square_values) == self.BOARD_SIDE or len(low_values) == self.BOARD_SIDE or len(noncolor_values) == self.BOARD_SIDE or len(hollow_values) == self.BOARD_SIDE or len(circle_values) == self.BOARD_SIDE:
                 return self.__current_player
         return -1
 
