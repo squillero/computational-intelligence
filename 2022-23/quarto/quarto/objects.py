@@ -19,6 +19,9 @@ class Player(object):
     def place_piece(self) -> tuple[int, int]:
         pass
 
+    def get_game(self):
+        return self.__quarto
+
 
 class Piece(object):
 
