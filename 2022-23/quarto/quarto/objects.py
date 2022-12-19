@@ -231,21 +231,21 @@ class Quarto(object):
         for i in range(self.BOARD_SIDE):
             if self.__board[i, self.BOARD_SIDE - 1 - i] < 0:
                 break
-            if self.__pieces[self.__board[i, -i]].HIGH:
+            if self.__pieces[self.__board[i, self.BOARD_SIDE - 1 - i]].HIGH:
                 high_values.append(self.__board[i, self.BOARD_SIDE - 1 - i])
             else:
                 low_values.append(self.__board[i, self.BOARD_SIDE - 1 - i])
-            if self.__pieces[self.__board[i, -i]].COLOURED:
+            if self.__pieces[self.__board[i, self.BOARD_SIDE - 1 - i]].COLOURED:
                 coloured_values.append(
                     self.__board[i, self.BOARD_SIDE - 1 - i])
             else:
                 noncolor_values.append(
                     self.__board[i, self.BOARD_SIDE - 1 - i])
-            if self.__pieces[self.__board[i, -i]].SOLID:
+            if self.__pieces[self.__board[i, self.BOARD_SIDE - 1 - i]].SOLID:
                 solid_values.append(self.__board[i, self.BOARD_SIDE - 1 - i])
             else:
                 hollow_values.append(self.__board[i, self.BOARD_SIDE - 1 - i])
-            if self.__pieces[self.__board[i, -i]].SQUARE:
+            if self.__pieces[self.__board[i, self.BOARD_SIDE - 1 - i]].SQUARE:
                 square_values.append(self.__board[i, self.BOARD_SIDE - 1 - i])
             else:
                 circle_values.append(self.__board[i, self.BOARD_SIDE - 1 - i])
