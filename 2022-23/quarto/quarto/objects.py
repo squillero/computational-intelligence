@@ -117,28 +117,28 @@ class Quarto(object):
     def __check_horizontal(self) -> int:
         for i in range(self.BOARD_SIDE):
             high_values = [
-                elem for elem in self.__board[i] if elem > 0 and self.__pieces[elem].HIGH
+                elem for elem in self.__board[i] if elem >= 0 and self.__pieces[elem].HIGH
             ]
             coloured_values = [
-                elem for elem in self.__board[i] if elem > 0 and self.__pieces[elem].COLOURED
+                elem for elem in self.__board[i] if elem >= 0 and self.__pieces[elem].COLOURED
             ]
             solid_values = [
-                elem for elem in self.__board[i] if elem > 0 and self.__pieces[elem].SOLID
+                elem for elem in self.__board[i] if elem >= 0 and self.__pieces[elem].SOLID
             ]
             square_values = [
-                elem for elem in self.__board[i] if elem > 0 and self.__pieces[elem].SQUARE
+                elem for elem in self.__board[i] if elem >= 0 and self.__pieces[elem].SQUARE
             ]
             low_values = [
-                elem for elem in self.__board[i] if elem > 0 and not self.__pieces[elem].HIGH
+                elem for elem in self.__board[i] if elem >= 0 and not self.__pieces[elem].HIGH
             ]
             noncolor_values = [
-                elem for elem in self.__board[i] if elem > 0 and not self.__pieces[elem].COLOURED
+                elem for elem in self.__board[i] if elem >= 0 and not self.__pieces[elem].COLOURED
             ]
             hollow_values = [
-                elem for elem in self.__board[i] if elem > 0 and not self.__pieces[elem].SOLID
+                elem for elem in self.__board[i] if elem >= 0 and not self.__pieces[elem].SOLID
             ]
             circle_values = [
-                elem for elem in self.__board[i] if elem > 0 and not self.__pieces[elem].SQUARE
+                elem for elem in self.__board[i] if elem >= 0 and not self.__pieces[elem].SQUARE
             ]
             if len(high_values) == self.BOARD_SIDE or len(
                     coloured_values
@@ -153,28 +153,28 @@ class Quarto(object):
     def __check_vertical(self):
         for i in range(self.BOARD_SIDE):
             high_values = [
-                elem for elem in self.__board[:, i] if elem > 0 and self.__pieces[elem].HIGH
+                elem for elem in self.__board[:, i] if elem >= 0 and self.__pieces[elem].HIGH
             ]
             coloured_values = [
-                elem for elem in self.__board[:, i] if elem > 0 and self.__pieces[elem].COLOURED
+                elem for elem in self.__board[:, i] if elem >= 0 and self.__pieces[elem].COLOURED
             ]
             solid_values = [
-                elem for elem in self.__board[:, i] if elem > 0 and self.__pieces[elem].SOLID
+                elem for elem in self.__board[:, i] if elem >= 0 and self.__pieces[elem].SOLID
             ]
             square_values = [
-                elem for elem in self.__board[:, i] if elem > 0 and self.__pieces[elem].SQUARE
+                elem for elem in self.__board[:, i] if elem >= 0 and self.__pieces[elem].SQUARE
             ]
             low_values = [
-                elem for elem in self.__board[:, i] if elem > 0 and not self.__pieces[elem].HIGH
+                elem for elem in self.__board[:, i] if elem >= 0 and not self.__pieces[elem].HIGH
             ]
             noncolor_values = [
-                elem for elem in self.__board[:, i] if elem > 0 and not self.__pieces[elem].COLOURED
+                elem for elem in self.__board[:, i] if elem >= 0 and not self.__pieces[elem].COLOURED
             ]
             hollow_values = [
-                elem for elem in self.__board[:, i] if elem > 0 and not self.__pieces[elem].SOLID
+                elem for elem in self.__board[:, i] if elem >= 0 and not self.__pieces[elem].SOLID
             ]
             circle_values = [
-                elem for elem in self.__board[:, i] if elem > 0 and not self.__pieces[elem].SQUARE
+                elem for elem in self.__board[:, i] if elem >= 0 and not self.__pieces[elem].SQUARE
             ]
             if len(high_values) == self.BOARD_SIDE or len(
                     coloured_values
@@ -229,24 +229,24 @@ class Quarto(object):
         hollow_values = []
         circle_values = []
         for i in range(self.BOARD_SIDE):
-            if self.__board[-i, -i] < 0:
+            if self.__board[i, -i] < 0:
                 break
-            if self.__pieces[self.__board[i, i]].HIGH:
-                high_values.append(self.__board[-i, -i])
+            if self.__pieces[self.__board[i, -i]].HIGH:
+                high_values.append(self.__board[i, -i])
             else:
-                low_values.append(self.__board[-i, -i])
-            if self.__pieces[self.__board[-i, -i]].COLOURED:
-                coloured_values.append(self.__board[-i, -i])
+                low_values.append(self.__board[i, -i])
+            if self.__pieces[self.__board[i, -i]].COLOURED:
+                coloured_values.append(self.__board[i, -i])
             else:
-                noncolor_values.append(self.__board[-i, -i])
-            if self.__pieces[self.__board[-i, -i]].SOLID:
-                solid_values.append(self.__board[-i, -i])
+                noncolor_values.append(self.__board[i, -i])
+            if self.__pieces[self.__board[i, -i]].SOLID:
+                solid_values.append(self.__board[i, -i])
             else:
-                hollow_values.append(self.__board[-i, -i])
-            if self.__pieces[self.__board[-i, -i]].SQUARE:
-                square_values.append(self.__board[-i, -i])
+                hollow_values.append(self.__board[i, -i])
+            if self.__pieces[self.__board[i, -i]].SQUARE:
+                square_values.append(self.__board[i, -i])
             else:
-                circle_values.append(self.__board[-i, -i])
+                circle_values.append(self.__board[i, -i])
         if len(high_values) == self.BOARD_SIDE or len(coloured_values) == self.BOARD_SIDE or len(
                 solid_values) == self.BOARD_SIDE or len(square_values) == self.BOARD_SIDE or len(
                     low_values
