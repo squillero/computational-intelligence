@@ -38,6 +38,11 @@ class Quarto(object):
     BOARD_SIDE = 4
 
     def __init__(self) -> None:
+        self.__players = ()
+        self.reset()
+
+
+    def reset(self):
         self.__board = np.ones(shape=(self.BOARD_SIDE, self.BOARD_SIDE), dtype=int) * -1
         self.__pieces = []
         self.__pieces.append(Piece(False, False, False, False))  # 0
@@ -57,7 +62,6 @@ class Quarto(object):
         self.__pieces.append(Piece(True, True, True, False))  # 14
         self.__pieces.append(Piece(True, True, True, True))  # 15
         self.__current_player = 0
-        self.__players = ()
         self.__selected_piece_index = -1
 
     def set_players(self, players: tuple[Player, Player]):
