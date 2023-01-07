@@ -67,6 +67,15 @@ class Quarto(object):
     def set_players(self, players: tuple[Player, Player]):
         self.__players = players
 
+
+    def get_current_player(self) -> int:
+        '''
+        Gets the current player
+        '''
+        return self.__current_player
+
+
+
     def select(self, pieceIndex: int) -> bool:
         '''
         select a piece. Returns True on success
