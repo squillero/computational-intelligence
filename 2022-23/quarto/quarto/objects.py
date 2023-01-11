@@ -42,7 +42,6 @@ class Quarto(object):
         self.__players = ()
         self.reset()
 
-
     def reset(self):
         self.__board = np.ones(shape=(self.BOARD_SIDE, self.BOARD_SIDE), dtype=int) * -1
         self.__binary_board = np.full(shape=(self.BOARD_SIDE, self.BOARD_SIDE, 4), fill_value=np.nan)
@@ -63,20 +62,17 @@ class Quarto(object):
         self.__pieces.append(Piece(True, True, False, True))  # 13
         self.__pieces.append(Piece(True, True, True, False))  # 14
         self.__pieces.append(Piece(True, True, True, True))  # 15
-        self.__current_player = 0
+        self._current_player = 0
         self.__selected_piece_index = -1
 
     def set_players(self, players: tuple[Player, Player]):
         self.__players = players
 
-
     def get_current_player(self) -> int:
         '''
         Gets the current player
         '''
-        return self.__current_player
-
-
+        return self._current_player
 
     def select(self, pieceIndex: int) -> bool:
         '''
@@ -159,7 +155,8 @@ class Quarto(object):
         '''
         Check who is the winner
         '''
-        l = [self.__check_horizontal(), self.__check_vertical(), self.__check_diagonal()]
+        l = [self.__check_horizontal(), self.__check_vertical(),
+             self.__check_diagonal()]
         for elem in l:
             if elem >= 0:
                 return elem
@@ -184,12 +181,14 @@ class Quarto(object):
             self.print()
             piece_ok = False
             while not piece_ok:
-                piece_ok = self.select(self.__players[self.__current_player].choose_piece())
+                piece_ok = self.select(
+                    self.__players[self._current_player].choose_piece())
             piece_ok = False
-            self.__current_player = (self.__current_player + 1) % self.MAX_PLAYERS
+            self._current_player = (
+                self._current_player + 1) % self.MAX_PLAYERS
             self.print()
             while not piece_ok:
-                x, y = self.__players[self.__current_player].place_piece()
+                x, y = self.__players[self._current_player].place_piece()
                 piece_ok = self.place(x, y)
             winner = self.check_winner()
         self.print()
