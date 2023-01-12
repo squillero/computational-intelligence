@@ -133,7 +133,7 @@ class Quarto(object):
         hsum = np.sum(self.__binary_board, axis=1)
 
         if self.BOARD_SIDE in hsum or 0 in hsum:
-            return self.__current_player
+            return self._current_player
         else:
             return -1
 
@@ -141,7 +141,7 @@ class Quarto(object):
         vsum = np.sum(self.__binary_board, axis=0)
 
         if self.BOARD_SIDE in vsum or 0 in vsum:
-            return self.__current_player
+            return self._current_player
         else:
             return -1
 
@@ -150,7 +150,7 @@ class Quarto(object):
         dsum2 = np.trace(np.fliplr(self.__binary_board), axis1=0, axis2=1)
 
         if self.BOARD_SIDE in dsum1 or self.BOARD_SIDE in dsum2 or 0 in dsum1 or 0 in dsum2:
-            return self.__current_player
+            return self._current_player
         else:
             return -1
 
