@@ -43,7 +43,7 @@ class Quarto(object):
         self.reset()
 
     def reset(self):
-        self.__board = np.ones(
+        self._board = np.ones(
             shape=(self.BOARD_SIDE, self.BOARD_SIDE), dtype=int) * -1
         self.__binary_board = np.full(
             shape=(self.BOARD_SIDE, self.BOARD_SIDE, 4), fill_value=np.nan)
@@ -80,7 +80,7 @@ class Quarto(object):
         '''
         select a piece. Returns True on success
         '''
-        if pieceIndex not in self.__board:
+        if pieceIndex not in self._board:
             self.__selected_piece_index = pieceIndex
             return True
         return False
@@ -90,20 +90,20 @@ class Quarto(object):
         Place piece in coordinates (x, y). Returns true on success
         '''
         if self.__placeable(x, y):
-            self.__board[y, x] = self.__selected_piece_index
+            self._board[y, x] = self.__selected_piece_index
             self.__binary_board[y,
                                 x][:] = self.__pieces[self.__selected_piece_index].binary
             return True
         return False
 
     def __placeable(self, x: int, y: int) -> bool:
-        return not (y < 0 or x < 0 or x > 3 or y > 3 or self.__board[y, x] >= 0)
+        return not (y < 0 or x < 0 or x > 3 or y > 3 or self._board[y, x] >= 0)
 
     def print(self):
         '''
         Print the board
         '''
-        for row in self.__board:
+        for row in self._board:
             print("\n -------------------")
             print("|", end="")
             for element in row:
@@ -121,7 +121,7 @@ class Quarto(object):
         '''
         Get the current board status (pieces are represented by index)
         '''
-        return copy.deepcopy(self.__board)
+        return copy.deepcopy(self._board)
 
     def get_selected_piece(self) -> int:
         '''
@@ -169,7 +169,7 @@ class Quarto(object):
         '''
         Check who is the loser
         '''
-        for row in self.__board:
+        for row in self._board:
             for elem in row:
                 if elem == -1:
                     return False
