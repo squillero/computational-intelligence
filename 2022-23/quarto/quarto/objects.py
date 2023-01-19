@@ -45,7 +45,7 @@ class Quarto(object):
     def reset(self):
         self._board = np.ones(
             shape=(self.BOARD_SIDE, self.BOARD_SIDE), dtype=int) * -1
-        self.__binary_board = np.full(
+        self._binary_board = np.full(
             shape=(self.BOARD_SIDE, self.BOARD_SIDE, 4), fill_value=np.nan)
         self.__pieces = []
         self.__pieces.append(Piece(False, False, False, False))  # 0
@@ -91,8 +91,8 @@ class Quarto(object):
         '''
         if self.__placeable(x, y):
             self._board[y, x] = self.__selected_piece_index
-            self.__binary_board[y,
-                                x][:] = self.__pieces[self.__selected_piece_index].binary
+            self._binary_board[y,
+                               x][:] = self.__pieces[self.__selected_piece_index].binary
             return True
         return False
 
@@ -130,7 +130,7 @@ class Quarto(object):
         return copy.deepcopy(self.__selected_piece_index)
 
     def __check_horizontal(self) -> int:
-        hsum = np.sum(self.__binary_board, axis=1)
+        hsum = np.sum(self._binary_board, axis=1)
 
         if self.BOARD_SIDE in hsum or 0 in hsum:
             return self._current_player
@@ -138,7 +138,7 @@ class Quarto(object):
             return -1
 
     def __check_vertical(self):
-        vsum = np.sum(self.__binary_board, axis=0)
+        vsum = np.sum(self._binary_board, axis=0)
 
         if self.BOARD_SIDE in vsum or 0 in vsum:
             return self._current_player
@@ -146,8 +146,8 @@ class Quarto(object):
             return -1
 
     def __check_diagonal(self):
-        dsum1 = np.trace(self.__binary_board, axis1=0, axis2=1)
-        dsum2 = np.trace(np.fliplr(self.__binary_board), axis1=0, axis2=1)
+        dsum1 = np.trace(self._binary_board, axis1=0, axis2=1)
+        dsum2 = np.trace(np.fliplr(self._binary_board), axis1=0, axis2=1)
 
         if self.BOARD_SIDE in dsum1 or self.BOARD_SIDE in dsum2 or 0 in dsum1 or 0 in dsum2:
             return self._current_player
