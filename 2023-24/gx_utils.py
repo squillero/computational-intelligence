@@ -1,4 +1,4 @@
-# Copyright © 2022 Giovanni Squillero <squillero@polito.it>
+# Copyright © 2023 Giovanni Squillero <squillero@polito.it>
 # https://github.com/squillero/computational-intelligence
 # Free for personal or classroom use; see 'LICENSE.md' for details.
 
