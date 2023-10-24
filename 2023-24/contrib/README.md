@@ -1,3 +1,3 @@
 # CONTRIB
 
-Spare students' contributions.
+Spare students' contributions. Unless otherwise noted, all material is licensed under the [EUPL](https://eupl.eu/)
