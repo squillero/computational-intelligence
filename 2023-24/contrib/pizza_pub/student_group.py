@@ -1,8 +1,9 @@
 from __future__ import annotations
 from dataclasses import dataclass
 
-@dataclass(frozen = True)
-class StudentGroup():
+
+@dataclass(frozen=True)
+class StudentGroup:
     ce: int
     ds: int
 
@@ -14,12 +15,12 @@ class StudentGroup():
     def __sub__(self, other):
         ce = self.ce - other.ce
         ds = self.ds - other.ds
-        if ce < 0 or ds < 0: raise ValueError('Not enough students to subtract subgroup')
+        if ce < 0 or ds < 0:
+            raise ValueError('Not enough students to subtract subgroup')
         return StudentGroup(ce, ds)
 
     def __str__(self):
         return f'({self.ce}, {self.ds})'
-
 
     def is_valid(self):
         if self.ds == 0:
@@ -59,6 +60,7 @@ class StudentGroup():
             raise ValueError
         half_students = number_of_students // 2
         return StudentGroup(half_students, half_students)
+
 
 """     def __hash__(self):
         return hash((self.ce, self.ds))
