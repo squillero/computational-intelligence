@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "set-coverings-assignment"
+version = "0.1.0"
+description = "A implementation of A* regarding the set-covering problem"
+authors = ["Leo <dardanelloleonardo@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+ipykernel = "^6.25.2"
+tqdm = "^4.66.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
