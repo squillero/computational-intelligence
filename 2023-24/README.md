@@ -1,4 +1,4 @@
-You can see my version of the A* set covering algorithm in the HMTL file 'my-set-covering.html'.
+You can see my version of the A* set covering algorithm in the HMTL file 'my-set-covering.ipynb'.
 
 The cost function just counts the number of taken sets.
 
