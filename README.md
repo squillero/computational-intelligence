@@ -5,7 +5,5 @@ This repo contains notes and code fragments for my lectures of *Computational In
 
 Students are also encouraged to join the Telegram group [polito_01urrov](https://t.me/polito_01urrov).
 
-### Legal
-
-Unless otherwise noted in individual files, **Copyright (c) [Giovanni Squillero](https://squillero.github.io/)**  
+**Copyright (c) [Giovanni Squillero](https://squillero.github.io/)** (unless otherwise noted in individual files)  
 Copying and distributing these files are permitted under certain conditions, see the [license](./LICENSE.md) for details.  
