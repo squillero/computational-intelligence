@@ -2,13 +2,14 @@
 # https://github.com/squillero/computational-intelligence
 # Free for personal or classroom use; see 'LICENSE.md' for details.
 
-from abc import abstractproperty
+from abc import abstractmethod
 
 class AbstractProblem:
     def __init__(self):
         self._calls = 0
 
-    @abstractproperty
+    @property
+    @abstractmethod
     def x(self):
         pass
 
@@ -28,7 +29,8 @@ class AbstractProblem:
 
 def make_problem(a):
     class Problem(AbstractProblem):
-        @abstractproperty
+        @property
+        @abstractmethod
         def x(self):
             return a
 
