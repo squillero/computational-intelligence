@@ -22,7 +22,7 @@ networkx = "^2.8.5"
 numpy = ">=1.23"
 pandas = "^1.4.3"
 pydot = "^1.4.2"
-python = ">=3.10,<3.12"
+python = ">=3.10"
 scipy = "^1.9.0"
 seaborn = "^0.11.2"
 toml = "^0.10.2"
@@ -31,6 +31,9 @@ isort = "^5.10.1"
 yapf = "^0.32.0"
 
 [tool.poetry.dev-dependencies]
+
+[tool.poetry.group.dev.dependencies]
+ipykernel = "^6.27.0"
 
 [tool.isort]
 profile = "black"
