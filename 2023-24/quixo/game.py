@@ -15,6 +15,7 @@ class Move(Enum):
 
 class Player(ABC):
     def __init__(self) -> None:
+        '''You can change this for your player if you need to handle state/have memory'''
         pass
 
     @abstractmethod
@@ -31,9 +32,11 @@ class Game(object):
         self._board = np.ones((5, 5), dtype=np.uint8) * -1
 
     def print(self):
+        '''Prints the board. -1 are neutral pieces, 0 are pieces of player 0, 1 pieces of player 1'''
         print(self._board)
 
     def check_winner(self) -> int:
+        '''Check the winner. Returns the player ID of the winner if any, otherwise returns -1'''
         for x in range(self._board.shape[0]):
             if all(self._board[x, :] == self._board[x, 0]):
                 return self._board[x, 0]
@@ -47,6 +50,7 @@ class Game(object):
         return -1
 
     def play(self, player1: Player, player2: Player) -> int:
+        '''Play the game. Returns the winning player'''
         players = [player1, player2]
         current_player_idx = 1
         winner = -1
@@ -61,6 +65,7 @@ class Game(object):
         return winner
 
     def __move(self, from_pos: tuple[int, int], slide: Move, player_id: int) -> bool:
+        '''Perform a move'''
         if player_id > 2:
             return False
         # Oh God, Numpy arrays
@@ -73,6 +78,7 @@ class Game(object):
         return acceptable
 
     def __take(self, from_pos: tuple[int, int], player_id: int) -> bool:
+        '''Take piece'''
         # acceptable only if in border
         acceptable: bool = (from_pos[0] == 0 and from_pos[1] < 5) or (from_pos[0] == 4 and from_pos[1] < 5) or (
             from_pos[1] == 0 and from_pos[0] < 5) or (from_pos[1] == 4 and from_pos[0] < 5) and (self._board[from_pos] < 0 or self._board[from_pos] == player_id)
@@ -81,6 +87,7 @@ class Game(object):
         return acceptable
 
     def __slide(self, from_pos: tuple[int, int], slide: Move) -> bool:
+        '''Slide the other pieces'''
         SIDES = [(0, 0), (0, 4), (4, 0), (4, 4)]
         if from_pos not in SIDES:
             acceptable_top: bool = from_pos[0] == 0 and (
@@ -104,7 +111,6 @@ class Game(object):
             # bottom right
             acceptable_bottom: bool = from_pos == (4, 4) and (
                 slide == Move.TOP or slide == Move.LEFT)
-
         acceptable: bool = acceptable_top or acceptable_bottom or acceptable_left or acceptable_right
         if acceptable:
             piece = self._board[from_pos]
