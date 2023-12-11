@@ -31,6 +31,12 @@ class Game(object):
     def __init__(self) -> None:
         self._board = np.ones((5, 5), dtype=np.uint8) * -1
 
+    def get_board(self):
+        '''
+        Returns the board
+        '''
+        return deepcopy(self._board)
+
     def print(self):
         '''Prints the board. -1 are neutral pieces, 0 are pieces of player 0, 1 pieces of player 1'''
         print(self._board)
