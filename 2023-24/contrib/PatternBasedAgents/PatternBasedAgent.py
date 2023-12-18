@@ -7,7 +7,7 @@ class PatternBasedAgent(Agent):
     """
     Class representing an agent with a pattern based genome which is a list of boolean values.  
     
-    The genome is a concatenation of the pattern repeated until the genome_size is filled.
+    The phenotype is given by a concatenation of the pattern repeated until the genome_size is filled.
     
     """
     
@@ -38,7 +38,7 @@ class PatternBasedAgent(Agent):
         return self
 
     
-    def generate_genome(self):
+    def generate_genome(self) -> None:
         """
         Function that generates the genome from the given pattern. Must be called after each mutation of the pattern.
         """
@@ -47,9 +47,15 @@ class PatternBasedAgent(Agent):
             ValueError("Pattern is not set")
         self.genome = list(chain.from_iterable([self.pattern for _ in range(self.genome_size//self.pattern_size + 1)])) # overshoot the size to be sure to have enough
         self.genome = self.genome[:self.genome_size]
-        #print(f"size : {self.pattern_size} with pattern : {self.pattern} , genome : {self.genome}")
 
     def mutation(self,mutation_rate : float = None) -> 'PatternBasedAgent':
+        """
+        Function that mutates the agent's pattern content and/or size. After the mutation, the genome is regenerated.
+        ----------
+        Parameters
+        - mutation_rate (float) - The mutation rate to be used (optional). If not given, the agent's mutation rate is used.
+        """
+        
         super().mutation(mutation_rate)
         
         ###### mutate the pattern_size
