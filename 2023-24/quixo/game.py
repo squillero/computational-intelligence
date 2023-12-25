@@ -30,12 +30,19 @@ class Player(ABC):
 class Game(object):
     def __init__(self) -> None:
         self._board = np.ones((5, 5), dtype=np.uint8) * -1
+        self.current_player_idx = 1
 
-    def get_board(self):
+    def get_board(self) -> np.ndarray:
         '''
         Returns the board
         '''
         return deepcopy(self._board)
+
+    def get_current_player(self) -> int:
+        '''
+        Returns the current player
+        '''
+        return deepcopy(self.current_player_idx)
 
     def print(self):
         '''Prints the board. -1 are neutral pieces, 0 are pieces of player 0, 1 pieces of player 1'''
@@ -74,15 +81,15 @@ class Game(object):
     def play(self, player1: Player, player2: Player) -> int:
         '''Play the game. Returns the winning player'''
         players = [player1, player2]
-        current_player_idx = 1
         winner = -1
         while winner < 0:
-            current_player_idx += 1
-            current_player_idx %= len(players)
+            self.current_player_idx += 1
+            self.current_player_idx %= len(players)
             ok = False
             while not ok:
-                from_pos, slide = players[current_player_idx].make_move(self)
-                ok = self.__move(from_pos, slide, current_player_idx)
+                from_pos, slide = players[self.current_player_idx].make_move(
+                    self)
+                ok = self.__move(from_pos, slide, self.current_player_idx)
             winner = self.check_winner()
         return winner
 
