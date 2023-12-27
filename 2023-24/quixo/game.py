@@ -7,6 +7,9 @@ import numpy as np
 
 
 class Move(Enum):
+    '''
+    Selects where you want to place the taken piece. The rest of the pieces are shifted
+    '''
     TOP = 0
     BOTTOM = 1
     LEFT = 2
@@ -21,6 +24,9 @@ class Player(ABC):
     @abstractmethod
     def make_move(self, game: 'Game') -> tuple[tuple[int, int], Move]:
         '''
+        The game accepts coordinates of the type (X, Y). X goes from left to right, while Y goes from top to bottom, as in 2D graphics.
+        Thus, the coordinates that this method returns shall be in the (X, Y) format.
+
         game: the Quixo game. You can use it to override the current game with yours, but everything is evaluated by the main game
         return values: this method shall return a tuple of X,Y positions and a move among TOP, BOTTOM, LEFT and RIGHT
         '''
