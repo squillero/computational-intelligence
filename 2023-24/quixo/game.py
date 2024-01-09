@@ -3,7 +3,7 @@ from copy import deepcopy
 from enum import Enum
 import numpy as np
 
-# Rules on PDF
+# Rules on PDF and https://cdn.1j1ju.com/medias/a8/5e/26-quixo-rulebook.pdf
 
 
 class Move(Enum):
@@ -57,32 +57,40 @@ class Game(object):
     def check_winner(self) -> int:
         '''Check the winner. Returns the player ID of the winner if any, otherwise returns -1'''
         # for each row
+        player = self.get_current_player()
+        winner = -1
         for x in range(self._board.shape[0]):
             # if a player has completed an entire row
             if self._board[x, 0] != -1 and all(self._board[x, :] == self._board[x, 0]):
-                # return the relative id
-                return self._board[x, 0]
+                # return winner is this guy
+                winner = self._board[x, 0]
+        if winner > -1 and winner != self.get_current_player():
+            return winner
         # for each column
         for y in range(self._board.shape[1]):
             # if a player has completed an entire column
             if self._board[0, y] != -1 and all(self._board[:, y] == self._board[0, y]):
                 # return the relative id
-                return self._board[0, y]
+                winner = self._board[0, y]
+        if winner > -1 and winner != self.get_current_player():
+            return winner
         # if a player has completed the principal diagonal
         if self._board[0, 0] != -1 and all(
             [self._board[x, x]
                 for x in range(self._board.shape[0])] == self._board[0, 0]
         ):
             # return the relative id
-            return self._board[0, 0]
+            winner = self._board[0, 0]
+        if winner > -1 and winner != self.get_current_player():
+            return winner
         # if a player has completed the secondary diagonal
         if self._board[0, -1] != -1 and all(
             [self._board[x, -(x + 1)]
              for x in range(self._board.shape[0])] == self._board[0, -1]
         ):
             # return the relative id
-            return self._board[0, -1]
-        return -1
+            winner = self._board[0, -1]
+        return winner
 
     def play(self, player1: Player, player2: Player) -> int:
         '''Play the game. Returns the winning player'''
