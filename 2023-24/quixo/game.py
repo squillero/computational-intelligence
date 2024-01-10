@@ -35,7 +35,7 @@ class Player(ABC):
 
 class Game(object):
     def __init__(self) -> None:
-        self._board = np.ones((5, 5), dtype=np.uint8) * -1
+        self._board = np.full((5, 5), -1, dtype= np.int8)
         self.current_player_idx = 1
 
     def get_board(self) -> np.ndarray:
