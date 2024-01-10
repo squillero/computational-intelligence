@@ -115,7 +115,7 @@ class Game(object):
         acceptable = self.__take((from_pos[1], from_pos[0]), player_id)
         if acceptable:
             acceptable = self.__slide((from_pos[1], from_pos[0]), slide)
-            if not acceptable: # resotre previous
+            if not acceptable: # restore previous
                 self._board[(from_pos[1], from_pos[0])] = deepcopy(prev_value)
         return acceptable
 
