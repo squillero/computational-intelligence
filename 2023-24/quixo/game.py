@@ -35,7 +35,7 @@ class Player(ABC):
 
 class Game(object):
     def __init__(self) -> None:
-        self._board = np.full((5, 5), -1, dtype= np.int8)
+        self._board = np.full((5, 5), -1, dtype=np.int8)
         self.current_player_idx = 1
 
     def get_board(self) -> np.ndarray:
@@ -115,7 +115,7 @@ class Game(object):
         acceptable = self.__take((from_pos[1], from_pos[0]), player_id)
         if acceptable:
             acceptable = self.__slide((from_pos[1], from_pos[0]), slide)
-            if not acceptable: # restore previous
+            if not acceptable:  # restore previous
                 self._board[(from_pos[1], from_pos[0])] = deepcopy(prev_value)
         return acceptable
 
@@ -124,20 +124,20 @@ class Game(object):
         row, col = from_pos
         from_border = row in (0, 4) or col in (0, 4)
         if not from_border:
-            return False # the cell is not in the border
+            return False  # the cell is not in the border
         if self._board[from_pos] != player_id and self._board[from_pos] != -1:
-            return False # the cell belongs to the opponent
+            return False  # the cell belongs to the opponent
         self._board[from_pos] = player_id
         return True
 
     @staticmethod
-    def acceptable_slides(from_position: tuple[int, int]):
+    def __acceptable_slides(from_position: tuple[int, int]):
         """When taking a piece from {from_position} returns the possible moves (slides)"""
         acceptable_slides = [Move.BOTTOM, Move.TOP, Move.LEFT, Move.RIGHT]
         axis_0 = from_position[0]    # axis_0 = 0 means uppermost row
         axis_1 = from_position[1]    # axis_1 = 0 means leftmost column
 
-        if axis_0 == 0: # can't move upwards if in the top row...
+        if axis_0 == 0:  # can't move upwards if in the top row...
             acceptable_slides.remove(Move.TOP)
         elif axis_0 == 4:
             acceptable_slides.remove(Move.BOTTOM)
@@ -151,7 +151,7 @@ class Game(object):
     def __slide(self, from_pos: tuple[int, int], slide: Move) -> bool:
         '''Slide the other pieces'''
         if slide not in self.acceptable_slides(from_pos):
-            return False # consider raise ValueError('Invalid argument value')
+            return False  # consider raise ValueError('Invalid argument value')
         axis_0, axis_1 = from_pos
         # np.roll performs a rotation of the element of a 1D ndarray
         if slide == Move.RIGHT:
