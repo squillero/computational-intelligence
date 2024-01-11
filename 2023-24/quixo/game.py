@@ -155,11 +155,11 @@ class Game(object):
         axis_0, axis_1 = from_pos
         # np.roll performs a rotation of the element of a 1D ndarray
         if slide == Move.RIGHT:
-            self._board[axis_0] = np.roll(self._board[axis_0], -1)
+            self._board[axis_0, axis_1:] = np.roll(self._board[axis_0, axis_1:], -1)
         elif slide == Move.LEFT:
-            self._board[axis_0] = np.roll(self._board[axis_0], 1)
+            self._board[axis_0, :(axis_1 + 1)] = np.roll(self._board[axis_0, :(axis_1 + 1)], 1)
         elif slide == Move.BOTTOM:
-            self._board[:, axis_1] = np.roll(self._board[:, axis_1], -1)
+            self._board[axis_0:, axis_1] = np.roll(self._board[axis_0:, axis_1], -1)
         elif slide == Move.TOP:
-            self._board[:, axis_1] = np.roll(self._board[:, axis_1], 1)
+            self._board[:(axis_0 + 1), axis_1] = np.roll(self._board[:(axis_0 + 1), axis_1], 1)
         return True
