@@ -150,7 +150,7 @@ class Game(object):
 
     def __slide(self, from_pos: tuple[int, int], slide: Move) -> bool:
         '''Slide the other pieces'''
-        if slide not in self.acceptable_slides(from_pos):
+        if slide not in self.__acceptable_slides(from_pos):
             return False  # consider raise ValueError('Invalid argument value')
         axis_0, axis_1 = from_pos
         # np.roll performs a rotation of the element of a 1D ndarray
