@@ -10,6 +10,7 @@ class Move(Enum):
     '''
     Selects where you want to place the taken piece. The rest of the pieces are shifted
     '''
+
     TOP = 0
     BOTTOM = 1
     LEFT = 2
@@ -76,8 +77,7 @@ class Game(object):
             return winner
         # if a player has completed the principal diagonal
         if self._board[0, 0] != -1 and all(
-            [self._board[x, x]
-                for x in range(self._board.shape[0])] == self._board[0, 0]
+            [self._board[x, x] for x in range(self._board.shape[0])] == self._board[0, 0]
         ):
             # return the relative id
             winner = self._board[0, 0]
@@ -85,8 +85,7 @@ class Game(object):
             return winner
         # if a player has completed the secondary diagonal
         if self._board[0, -1] != -1 and all(
-            [self._board[x, -(x + 1)]
-             for x in range(self._board.shape[0])] == self._board[0, -1]
+            [self._board[x, -(x + 1)] for x in range(self._board.shape[0])] == self._board[0, -1]
         ):
             # return the relative id
             winner = self._board[0, -1]
@@ -101,8 +100,7 @@ class Game(object):
             self.current_player_idx %= len(players)
             ok = False
             while not ok:
-                from_pos, slide = players[self.current_player_idx].make_move(
-                    self)
+                from_pos, slide = players[self.current_player_idx].make_move(self)
                 ok = self.__move(from_pos, slide, self.current_player_idx)
             winner = self.check_winner()
         return winner
@@ -134,8 +132,8 @@ class Game(object):
     def __acceptable_slides(from_position: tuple[int, int]):
         """When taking a piece from {from_position} returns the possible moves (slides)"""
         acceptable_slides = [Move.BOTTOM, Move.TOP, Move.LEFT, Move.RIGHT]
-        axis_0 = from_position[0]    # axis_0 = 0 means uppermost row
-        axis_1 = from_position[1]    # axis_1 = 0 means leftmost column
+        axis_0 = from_position[0]  # axis_0 = 0 means uppermost row
+        axis_1 = from_position[1]  # axis_1 = 0 means leftmost column
 
         if axis_0 == 0:  # can't move upwards if in the top row...
             acceptable_slides.remove(Move.TOP)
@@ -153,13 +151,29 @@ class Game(object):
         if slide not in self.__acceptable_slides(from_pos):
             return False  # consider raise ValueError('Invalid argument value')
         axis_0, axis_1 = from_pos
-        # np.roll performs a rotation of the element of a 1D ndarray
+
         if slide == Move.RIGHT:
-            self._board[axis_0] = np.roll(self._board[axis_0], -1)
+            # pick the cube without face or with player's face and put it on the far right of the same row and push the other cubes on the left
+            self._board[axis_0] = np.concatenate(
+                (self._board[axis_0, :axis_1], self._board[axis_0, axis_1 + 1 :], self._board[axis_0, axis_1]),
+                axis=None,
+            )
         elif slide == Move.LEFT:
-            self._board[axis_0] = np.roll(self._board[axis_0], 1)
+            # pick the cube without face or with player's face and put it on the far left of the same row and push the other cubes on the right
+            self._board[axis_0] = np.concatenate(
+                (self._board[axis_0, axis_1], self._board[axis_0, :axis_1], self._board[axis_0, axis_1 + 1 :]),
+                axis=None,
+            )
         elif slide == Move.BOTTOM:
-            self._board[:, axis_1] = np.roll(self._board[:, axis_1], -1)
+            # pick the cube without face or with player's face and put it at the bottom on the same column and push the other cubes upwards
+            self._board[:, axis_1] = np.concatenate(
+                (self._board[:axis_0, axis_1], self._board[axis_0 + 1 :, axis_1], self._board[axis_0, axis_1]),
+                axis=None,
+            )
         elif slide == Move.TOP:
-            self._board[:(axis_0 + 1), axis_1] = np.roll(self._board[:(axis_0 + 1), axis_1], 1)
+            # pick the cube without face or with player's face and put it at the top on the same column and push the other cubes downwards
+            self._board[:, axis_1] = np.concatenate(
+                (self._board[axis_0, axis_1], self._board[:axis_0, axis_1], self._board[axis_0 + 1 :, axis_1]),
+                axis=None,
+            )
         return True
