@@ -161,5 +161,5 @@ class Game(object):
         elif slide == Move.BOTTOM:
             self._board[:, axis_1] = np.roll(self._board[:, axis_1], -1)
         elif slide == Move.TOP:
-            self._board[:, axis_1] = np.roll(self._board[:, axis_1], 1)
+            self._board[:(axis_0 + 1), axis_1] = np.roll(self._board[:(axis_0 + 1), axis_1], 1)
         return True
