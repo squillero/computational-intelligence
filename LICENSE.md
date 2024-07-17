@@ -1,4 +1,4 @@
-## Computer Sciences
+## Computational Intelligence
 
 <https://github.com/squillero/computational-intelligence>
 
