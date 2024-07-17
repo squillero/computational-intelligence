@@ -2,7 +2,7 @@
 
 <https://github.com/squillero/computational-intelligence>
 
-#### Copyright © 2015-2023 by Giovanni Squillero
+#### Copyright © 2021-2024 by Giovanni Squillero
 
 Permission to make digital or hard copies of some or all of these files for
 personal or classroom use is granted without fee provided that copies are not
