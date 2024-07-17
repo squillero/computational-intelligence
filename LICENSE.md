@@ -1,6 +1,6 @@
 ## Computer Sciences
 
-<https://github.com/squillero/computer-sciences>
+<https://github.com/squillero/computational-intelligence>
 
 #### Copyright © 2015-2023 by Giovanni Squillero
 
