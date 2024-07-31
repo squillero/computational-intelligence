@@ -9,5 +9,5 @@ personal or classroom use is granted without fee provided that copies are not
 made or distributed for profit or commercial advantage, and that copies bear
 both this copyright notice and the full reference to the source repository.
 To republish, to redistribute to lists, or to post on servers, contact the
-Author. Copyrights for third-party components must be honored.
+Author. Copyrights for third-party contributions must be honored.
 These files are offered as-is, without any warranty.
