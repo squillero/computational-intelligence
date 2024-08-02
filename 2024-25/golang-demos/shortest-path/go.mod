@@ -1,4 +1,4 @@
-module demo
+module demo-sp
 
 go 1.21
 
