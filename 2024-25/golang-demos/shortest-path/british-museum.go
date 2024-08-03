@@ -12,7 +12,7 @@ import (
 func britishMuseum(graph *Graph, feed chan<- interface{}, tag int32) {
 	cs := float32(graph.canvasSize)
 	for {
-		var p viz.TaggedPolyline
+		var p viz.TaggedVanishingPolyline
 		p.Tag = tag
 		p.Points = make([]viz.Point, 0)
 		for np := 3 + rand.Intn(10); np > 0; np -= 1 {
