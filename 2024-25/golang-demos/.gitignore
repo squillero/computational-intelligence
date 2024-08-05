@@ -2,7 +2,8 @@
 # https://github.com/github/gitignore/blob/main/community/Golang/Go.AllowList.gitignore
 #
 # Binaries for programs and plugins
-shortest-path/demo-sp
+/shortest-path/demo-sp
+
 *.exe
 *.exe~
 *.dll
