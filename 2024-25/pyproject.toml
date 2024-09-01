@@ -7,11 +7,12 @@
     requires      = ["poetry-core>=1.0.0"]
 
 [tool.poetry]
-    authors     = ["Giovanni Squillero <squillero@polito.it>"]
-    description = "Code and Notebook dependencies for Computational Intelligence (2023-24)"
-    license     = "proprietary"
-    name        = "ci"
-    version     = "2023.1"
+    authors      = ["Giovanni Squillero <squillero@polito.it>"]
+    description  = "Code and Notebook dependencies for Computational Intelligence (2023-24)"
+    license      = "proprietary"
+    name         = "ci"
+    version      = "2023.1"
+    package-mode = false
 
     [tool.poetry.dependencies]
         black        = { extras = ["yupyter"], version = "^22.12.0" }
@@ -41,7 +42,7 @@
     profile = "black"
 
 [tool.black]
-    target-version            = ['py311']
+    target-version            = ['py310']
     extend-exclude            = "^venv$"
     include                   = '(\.ipynb$|\.py$)'
     line-length               = 120
