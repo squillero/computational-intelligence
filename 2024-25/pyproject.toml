@@ -1,0 +1,49 @@
+# Copyright © 2024 Giovanni Squillero <squillero@polito.it>
+# https://github.com/squillero/computational-intelligence
+# Free for personal or classroom use; see 'LICENSE.md' for details.
+
+[build-system]
+    build-backend = "poetry.core.masonry.api"
+    requires      = ["poetry-core>=1.0.0"]
+
+[tool.poetry]
+    authors      = ["Giovanni Squillero <squillero@polito.it>"]
+    description  = "Code and Notebook dependencies for Computational Intelligence (2023-24)"
+    license      = "proprietary"
+    name         = "ci"
+    version      = "2023.1"
+    package-mode = false
+
+    [tool.poetry.dependencies]
+        black        = { extras = ["yupyter"], version = "^22.12.0" }
+        jupyter      = "^1.0.0"
+        matplotlib   = "^3.5.3"
+        nero         = { extras = ["jupyter"], version = "^1.0.20220202" }
+        networkx     = "^2.8.5"
+        pandas       = "^1.4.3"
+        pydot        = "^1.4.2"
+        python       = ">=3.10"
+        scipy        = "^1.9.0"
+        toml         = "^0.10.2"
+        tqdm         = "^4.64.0"
+        isort        = "^5.10.1"
+        yapf         = "^0.32.0"
+        multiset     = "^3.1.0"
+        icecream     = "^2.1.3"
+        scikit-learn = "^1.5.1"
+        numpy        = "^2.1.0"
+
+    [tool.poetry.dev-dependencies]
+
+    [tool.poetry.group.dev.dependencies]
+        ipykernel = "^6.27.0"
+
+[tool.isort]
+    profile = "black"
+
+[tool.black]
+    target-version            = ['py310']
+    extend-exclude            = "^venv$"
+    include                   = '(\.ipynb$|\.py$)'
+    line-length               = 120
+    skip-string-normalization = true
