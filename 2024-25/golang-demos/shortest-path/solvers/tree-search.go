@@ -7,10 +7,8 @@ package solvers
 import (
 	"demo-sp/graph"
 	"demo-sp/viz"
-	"fmt"
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
-	"log"
 )
 
 func DepthFirstSearch(graph *graph.Graph, feed chan<- interface{}, tag int32) []int {
@@ -51,17 +49,17 @@ func AStarSearch(graph *graph.Graph, feed chan<- interface{}, tag int32) []int {
 func treeSearch(graph *graph.Graph, feed chan<- interface{}, tag int32, name string, frontier Queue) []int {
 	pp := message.NewPrinter(language.English)
 
-	check := make(map[string]int)
+	//check := make(map[string]int)
 
 	frontier.Enqueue([]int{0})
 	steps := 0
 	for !frontier.Empty() {
 		//slog.Debug("TS", "frontier", frontier)
 		path := frontier.Dequeue()
-		check[fmt.Sprint(path)]++
-		if check[fmt.Sprint(path)] > 1 {
-			log.Fatalf("Panik: %v", path)
-		}
+		//check[fmt.Sprint(path)]++
+		//if check[fmt.Sprint(path)] > 1 {
+		//	log.Fatalf("Panik: %v", path)
+		//}
 		//slog.Debug("TS", "path", path, "len", graph.PathLength(path))
 		graph.DrawPath(feed, path, tag)
 

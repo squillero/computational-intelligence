@@ -76,14 +76,14 @@ func main() {
 	//	solvers.GreedyInformed(graph, feed, tag)
 	//}()
 
-	//go func() {
-	//	tag++
-	//	known := make([]int, len(graph.Nodes))
-	//	for s := 0; s < len(graph.Nodes); s++ {
-	//		known[s] = s
-	//	}
-	//	solvers.BranchNBound(graph, feed, tag, known)
-	//}()
+	go func() {
+		var tag int32 = 0
+		known := make([]int, len(graph.Nodes))
+		for s := 0; s < len(graph.Nodes); s++ {
+			known[s] = s
+		}
+		solvers.BranchNBound(graph, feed, tag, known)
+	}()
 
 	//go func() {
 	//	var tag int32 = 0
@@ -103,11 +103,11 @@ func main() {
 	//	solvers.BranchNBound(graph, feed, tag, known)
 	//}()
 
-	go solvers.AStarSearch(graph, feed, 0)
-	go solvers.GreedySearch(graph, feed, 1)
-	go solvers.DepthFirstSearch(graph, feed, 2)
-	go solvers.BreadthFirstSearch(graph, feed, 3)
-	go solvers.UniformCostSearch(graph, feed, 4)
+	go solvers.AStarSearch(graph, feed, 1)
+	go solvers.GreedySearch(graph, feed, 2)
+	go solvers.DepthFirstSearch(graph, feed, 3)
+	go solvers.BreadthFirstSearch(graph, feed, 4)
+	go solvers.UniformCostSearch(graph, feed, 5)
 
 	viz.Run(feed, "Computational Intelligence 🐹 2024/25", CanvasSize, WindowSize)
 	//britishMuseum(graph)
