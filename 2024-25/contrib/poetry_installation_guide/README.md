@@ -8,7 +8,7 @@
   - [Python installation](#python-installation)
   - [Windows powershell setup](#windows-powershell-setup)
   - [Virtual environment](#virtual-environment)
-    - [Setting up vscodeS](#setting-up-vscodes)
+    - [Setting up vscode](#setting-up-vscode)
     - [Creating a Virtual environment using venv](#creating-a-virtual-environment-using-venv)
     - [Activate the environment](#activate-the-environment)
   - [Install poetry](#install-poetry)
@@ -55,9 +55,9 @@ As stated in the [poetry docs](https://python-poetry.org/docs/):
 > *Poetry should always be installed in a dedicated virtual environment to isolate it from the rest of your system. It should in no case be installed in the environment of the project that is to be managed by Poetry. This ensures that Poetry’s own dependencies will not be accidentally upgraded or uninstalled.*
 
 
-### Setting up vscodeS
+### Setting up vscode
 
-So open visual studio code in your desired folder. Then open the terminal
+Open visual studio code in your desired folder. Then open the terminal
 
 
 >Terminal -> New Terminal
@@ -74,7 +74,7 @@ You should see a powershell terminal opened in your interface:
 
 ### Creating a Virtual environment using venv
 
-> ⚠️ for the following step always remain in the yor working folder.
+> ⚠️ for the following step always remain in the your working folder.
 
 In the just opened terminal use the following command:
 
@@ -116,7 +116,7 @@ pip install poetry
 
 ### Downalod the .toml file for the course
 
-To configure the project we need the .toml file with all the required packacges. We can use the one in [Professor Squillero's Repository]([2024-25/pyproject.toml](https://github.com/squillero/computational-intelligence/blob/master/2024-25/pyproject.toml)).
+To configure the project we need the .toml file with all the required packages. We can use the one in [Professor Squillero's Repository](https://github.com/squillero/computational-intelligence/blob/master/2024-25/pyproject.toml).
 Download the file and put it inside your project folder (NOT inside the venv folder).
 
 ```
@@ -139,13 +139,13 @@ Now we can run the following command to tell poetry to use the .toml file to dow
 peotry install
 ```
 
-It will take some time to downalod all the files. You can check in `<your-venv>/Lib/` if the packages and dependencies are correctly installed.
+It will take some time to download all the files. You can check in `<your-venv>/Lib/` if the packages and dependencies are correctly installed.
 
 After installation you're good to go!
 
 ## jupyter
 
-To conclude this guide let's create a notebook and set the new envirnoment we created as the running one.
+To conclude this guide let's create a notebook and set the new environment we created before as the current kernel.
 
 ### Create jupyter notebook
 
@@ -165,7 +165,7 @@ Then select your newly created environment
 
 ![](imgs/p6.png)
 
-You're all done now! Try some code and che if all the file works.
+You're all done now! Try some code and check if all the file works.
 
 ## Credits
 
@@ -175,4 +175,4 @@ You're all done now! Try some code and che if all the file works.
 - [poetry docs](https://python-poetry.org/docs/)
 - [Getting started with the terminal](https://code.visualstudio.com/docs/terminal/getting-started#:~:text=Open%20the%20terminal%20by%20selecting,the%20Ctrl%2B%60%20keyboard%20shortcut.)
 - [venv — Creation of virtual environments](https://docs.python.org/3/library/venv.html)
-- [Professor Squillero's Repository]([2024-25/pyproject.toml](https://github.com/squillero/computational-intelligence/blob/master/2024-25/pyproject.toml))
+- [Professor Squillero's Repository](https://github.com/squillero/computational-intelligence/blob/master/2024-25/pyproject.toml)
