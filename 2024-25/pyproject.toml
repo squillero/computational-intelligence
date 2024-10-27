@@ -33,6 +33,7 @@
     joblib = "^1.4.2"
     pandas = "^2.2.3"
     geopy = "^2.4.1"
+    seaborn = "^0.13.2"
 
     [tool.poetry.dev-dependencies]
 
