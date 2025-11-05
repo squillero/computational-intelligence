@@ -3,14 +3,14 @@
 # Free under certain conditions — see the license for details.
 
 [project]
-    name            = "CI"
-    version         = "2025.10"
-    description     = "Computational Intelligence code"
-    readme          = "https://github.com/squillero/computational-intelligence/"
+    name = "CI"
+    version = "2025.10"
+    description = "Computational Intelligence code"
+    readme = "https://github.com/squillero/computational-intelligence/"
     requires-python = ">=3.13"
-    dependencies    = [
-    "icecream>=2.1.8",
-    "jupyter>=1.1.1",
-    "numpy>=2.3.3",
-    "tqdm>=4.67.1",
-]
+    dependencies = [
+        "icecream>=2.1.8",
+        "jupyter>=1.1.1",
+        "numpy>=2.3.3",
+        "tqdm>=4.67.1",
+    ]
