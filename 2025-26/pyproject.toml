@@ -12,7 +12,6 @@
         "icecream>=2.1.8",
         "jupyter>=1.1.1",
         "matplotlib>=3.10.7",
-        "networkx>=3.5",
-        "numpy>=2.3.3",
+        "networkx>=3.6",
         "tqdm>=4.67.1",
-    ]
+]
