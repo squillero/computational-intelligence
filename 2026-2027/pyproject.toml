@@ -1,0 +1,15 @@
+# Copyright © 2026 Giovanni Squillero / Politecnico di Torino
+# https://github.com/squillero/computational-intelligence
+# Free under certain conditions — see the license for details.
+
+[project]
+    name            = "CI2026"
+    version         = "2026.7.11"
+    description     = "Add your description here"
+    readme          = "README.md"
+    requires-python = ">=3.14"
+    dependencies    = [
+    "arcade>=3.3.3",
+    "icecream>=2.2.0",
+    "z3-solver>=4.16.0.0",
+]
