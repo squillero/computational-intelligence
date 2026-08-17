@@ -105,9 +105,9 @@ func main() {
 
 	go solvers.AStarSearch(graph, feed, 1)
 	go solvers.GreedySearch(graph, feed, 2)
-	go solvers.DepthFirstSearch(graph, feed, 3)
-	go solvers.BreadthFirstSearch(graph, feed, 4)
-	go solvers.UniformCostSearch(graph, feed, 5)
+	//go solvers.DepthFirstSearch(graph, feed, 3)
+	//go solvers.BreadthFirstSearch(graph, feed, 4)
+	//go solvers.UniformCostSearch(graph, feed, 5)
 
 	viz.Run(feed, "Computational Intelligence 🐹 2024/25", CanvasSize, WindowSize)
 	//britishMuseum(graph)
