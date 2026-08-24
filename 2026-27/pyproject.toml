@@ -3,13 +3,21 @@
 # Free under certain conditions — see the license for details.
 
 [project]
-    name            = "CI2026"
-    version         = "2026.7.11"
-    description     = "Add your description here"
-    readme          = "README.md"
+    name = "CI2026"
+    version = "2026.7.11"
+    description = "Computational Intelligence @ PoliTO (01URRov 01URRsm)"
+    authors = [
+        { name = "Giovanni Squillero", email = "giovanni.squillero@polito.it" },
+    ]
+    license-files = ["LICENSE"]
+    readme = "../README.md"
     requires-python = ">=3.14"
-    dependencies    = [
-    "arcade>=3.3.3",
-    "icecream>=2.2.0",
-    "z3-solver>=4.16.0.0",
+    dependencies = [
+        "arcade>=3.3.3",
+        "icecream>=2.2.0",
+        "jupyter>=1.1.1",
+        "matplotlib>=3.11.1",
+        "networkx>=3.6.1",
+        "scipy>=1.18.1",
+        "z3-solver>=4.16.0.0",
 ]

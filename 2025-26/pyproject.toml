@@ -5,8 +5,12 @@
 [project]
     name = "CI"
     version = "2025.10"
-    description = "Computational Intelligence code"
-    readme = "https://github.com/squillero/computational-intelligence/"
+    description = "Computational Intelligence @ PoliTO (01URRov 01URRsm)"
+    authors = [
+        { name = "Giovanni Squillero", email = "giovanni.squillero@polito.it" },
+    ]
+    license-files = ["LICENSE"]
+    readme = "../README.md"
     requires-python = ">=3.14"
     dependencies = [
         "icecream>=2.1.8",
@@ -14,4 +18,4 @@
         "matplotlib>=3.10.7",
         "networkx>=3.6",
         "tqdm>=4.67.1",
-]
+    ]
