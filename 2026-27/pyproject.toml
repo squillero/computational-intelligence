@@ -4,7 +4,7 @@
 
 [project]
     name = "CI2026"
-    version = "2026.7.11"
+    version = "2026.1"
     description = "Computational Intelligence @ PoliTO (01URRov 01URRsm)"
     authors = [
         { name = "Giovanni Squillero", email = "giovanni.squillero@polito.it" },
@@ -16,8 +16,10 @@
         "arcade>=3.3.3",
         "icecream>=2.2.0",
         "jupyter>=1.1.1",
+        "marimo>=0.24.0",
         "matplotlib>=3.11.1",
         "networkx>=3.6.1",
+        "rich>=15.0.0",
         "scipy>=1.18.1",
         "z3-solver>=4.16.0.0",
 ]
