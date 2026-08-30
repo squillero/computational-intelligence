@@ -1,3 +1,7 @@
+# Copyright © Giovanni Squillero / Politecnico di Torino
+# https://github.com/squillero/computational-intelligence
+# Free under certain conditions — see the license for details.
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -137,7 +141,35 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# GX Files
-.DS_Store
+# GX's IDEs
 .idea
 .vscode
+
+# Apple General
+.DS_Store
+.localized
+__MACOSX/
+.AppleDouble
+.LSOverride
+Icon[]
+
+# Apple Resource forks
+._*
+
+# Files and directories that might appear in the root of a volume
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.com.apple.timemachine.supported
+.PKInstallSandboxManager
+.PKInstallSandboxManager-SystemSoftware
+.hotfiles.btree
+.vol
+.file
+.disk_label*
+lost+found
+.HFS+ Private Directory Data[]
