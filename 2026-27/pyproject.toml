@@ -13,10 +13,8 @@
     readme = "../README.md"
     requires-python = ">=3.14"
     dependencies = [
-        "arcade>=3.3.3",
         "icecream>=2.2.0",
         "jupyter>=1.1.1",
-        "marimo>=0.24.0",
         "matplotlib>=3.11.1",
         "networkx>=3.6.1",
         "rich>=15.0.0",
