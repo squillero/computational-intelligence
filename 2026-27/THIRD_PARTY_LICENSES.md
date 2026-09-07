@@ -76,6 +76,26 @@ For the most current information, please refer to the original project repositor
 >
 > THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+### pathos
+
+- URL: https://pypi.org/project/pathos/
+- License: BSD 3-Clause License
+
+> Copyright (c) 2004-2016 California Institute of Technology.
+> Copyright (c) 2016-2026 The Uncertainty Quantification Foundation.
+>
+> All rights reserved.
+> 
+> This software is available subject to the conditions and terms laid out below. By downloading and using this software you are agreeing to the following conditions.
+> 
+> Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+> 
+> 1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+> 2.  Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
+> 3. Neither the names of the copyright holders nor the names of any of the contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+> 
+> THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 ### rich
 
 - URL: https://pypi.org/project/rich/
@@ -109,16 +129,16 @@ For the most current information, please refer to the original project repositor
 ### tqdm
 
 - URL: https://pypi.org/project/tqdm/
-- License: Mozilla Public Licence & MIT License
+- License: Mozilla Public License & MIT License
 
-> Mozilla Public Licence (MPL) v. 2.0 - Exhibit A
-
+> Mozilla Public License (MPL) v. 2.0 - Exhibit A
+>
 > This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this project, You can obtain one at https://mozilla.org/MPL/2.0/.
-
+>
 > MIT License (MIT)
-
+>
 > Copyright (c) 2013 noamraph
-
+>
 > Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 >
 > The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.

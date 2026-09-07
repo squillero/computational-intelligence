@@ -79,16 +79,16 @@ For the most current information, please refer to the original project repositor
 ### tqdm
 
 - URL: https://pypi.org/project/tqdm/
-- License: Mozilla Public Licence & MIT License
+- License: Mozilla Public License & MIT License
 
-> Mozilla Public Licence (MPL) v. 2.0 - Exhibit A
-
+> Mozilla Public License (MPL) v. 2.0 - Exhibit A
+>
 > This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0. If a copy of the MPL was not distributed with this project, You can obtain one at https://mozilla.org/MPL/2.0/.
-
+>
 > MIT License (MIT)
-
+>
 > Copyright (c) 2013 noamraph
-
+>
 > Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 >
 > The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
