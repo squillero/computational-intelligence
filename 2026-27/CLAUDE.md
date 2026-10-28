@@ -28,11 +28,13 @@ CI (`../.github/workflows/superlinter.yml`) runs GitHub Super-Linter only on non
 Notebooks follow the lecture order, from state-space search to single-state and population-based optimization:
 
 - `alcuinus.ipynb` — Alcuin's river-crossing puzzle (brothers/sisters variant). Models states as `NamedTuple` with `frozenset` fields (hashable), enumerates the state space and the solution space, and draws them with `networkx` + `matplotlib`.
+- `table-top.ipynb` — blocks world: piles of labelled blocks on a table (`TABLE`, a list of piles). A recursive `put_on(block, target)` clears whatever is above both blocks, using a tabu list to keep displaced blocks off the piles involved, and logs nested moves.
+- `8-puzzle.ipynb` — the (s²−1)-puzzle as graph search. A single `search()` whose frontier is a `UPQ` becomes breadth-first, depth-first, greedy best-first or A\* through the `priority_function` it is given. A\* is run with misplaced-tiles and with Manhattan-distance heuristics; the blank is excluded to keep them admissible.
 - `1-max.ipynb` — OneMax with a minimal hill climber (`fitness` / `tweak` on a `list[bool]`).
 - `knapsack.ipynb`, `knapsack2.ipynb` — unbounded knapsack with hill climbing; solutions are `dict[object → quantity]`, overweight solutions get fitness 0. `knapsack2` adds a greedy start, a multi-move `tweak`, a no-improvement stop criterion and a fitness-history plot (`accumulate(history, max)`).
 - `multiple-knapsack.ipynb` — 0-1 multi-dimensional knapsack in NumPy (seeded): Random-Mutation Hill Climber, RMHC with a stronger tweak, steepest step with restart.
 - `rastrigin.ipynb` — Evolution Strategies on the (negated, i.e. maximized) Rastrigin function: vanilla (1+λ)-ES, adaptive (1+λ)-ES, adaptive (μ+λ)-ES.
-- `upq/upq.py` — reusable updatable priority queue (lazy-deletion heap) for search algorithms such as Dijkstra/A*.
+- `upq/upq.py` — reusable updatable priority queue (lazy-deletion heap) for search algorithms such as Dijkstra/A* (used as the frontier in `8-puzzle`). `push_update(item, priority)` inserts or reprioritizes; `pop()` returns `(item, priority)`. No `__init__.py`: import it as `from upq.upq import UPQ` with the year directory as working directory.
 
 ## Conventions
 
