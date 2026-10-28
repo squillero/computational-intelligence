@@ -10,7 +10,7 @@ This is teaching code: clarity and readability for students matter more than gen
 
 ## Environment
 
-Each year directory is a self-contained [uv](https://docs.astral.sh/uv/) project (`pyproject.toml`, `uv.lock`, `.venv/` here). Python is pinned to `3.15+freethreaded` (`.python-version`); notebooks use the local `.venv` kernel.
+Each year directory is a self-contained [uv](https://docs.astral.sh/uv/) project (`pyproject.toml`, `uv.lock`, `.venv/` here). Python is pinned to `3.14+freethreaded` (`.python-version`); notebooks use the local `.venv` kernel.
 
 ```sh
 uv sync                        # create/update .venv from uv.lock
