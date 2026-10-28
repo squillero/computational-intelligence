@@ -173,3 +173,6 @@ Icon[]
 .disk_label*
 lost+found
 .HFS+ Private Directory Data[]
+
+# Claude Code personal settings
+**/.claude/settings.local.json
